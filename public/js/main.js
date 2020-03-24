@@ -142,7 +142,7 @@ const addMovie = (imdbid) => {
   }).then(async (response) => {
     const serverResponse = await response.json();
     if (serverResponse) {
-      setTimeout(() => window.location.reload(), 300);
+      window.location.pathname = '/';
     }
   });
 };
