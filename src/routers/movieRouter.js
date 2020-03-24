@@ -52,13 +52,12 @@ movieRouter.route('/')
       date,
       user_id: req.user.id,
     };
-    debug(req.user);
 
     // check if the movie already exists in the database
     const movieExists = await movieController.findMovieByTitle(apiData.Title);
 
     if (movieExists) { // if the movie exists in the db
-      const viewedByUser = () => (req.user.movies.indexOf(movieExists._id) !== -1);
+      const viewedByUser = () => (req.user.movies.indexOf(movieExists._id) === -1);
       if (!viewedByUser) { // if the movie exists but the user hasn't seen it
         movieController.addRating(ratings, movieExists._id); // add the user's ratings
         movieController.addThemes(themeData, movieExists._id);// and themes
