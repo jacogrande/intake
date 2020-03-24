@@ -58,6 +58,7 @@ movieRouter.route('/')
 
     if (movieExists) { // if the movie exists in the db
       const viewedByUser = () => (req.user.movies.indexOf(movieExists._id) === -1);
+      debug(viewedByUser);
       if (!viewedByUser) { // if the movie exists but the user hasn't seen it
         movieController.addRating(ratings, movieExists._id); // add the user's ratings
         movieController.addThemes(themeData, movieExists._id);// and themes
