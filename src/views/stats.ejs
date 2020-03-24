@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+
+    <!-- CSS links -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+
+  </head>
+  <body>
+
+    <!-- ====== NAV ====== -->
+    <nav class="navbar navbar-expand-lg">
+      <a class="navbar-brand" id = 'logo' href="/movies">INTAKE</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <span class = 'col-lg-7 col-md-7'></span>
+      <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/movies">MOVIES</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/stats">STATS</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">PROFILE</a>
+            </li>
+            <li class="nav_button">
+              <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>
+                <span class="nav-link">+</span>
+                <div class="add_hover clicker_cursor">
+                  Add a movie
+                </div>
+              </a>
+            </li>
+        </ul>
+      </div>
+    </nav>
+
+    <%
+      function getFormattedDate() {
+        const todayTime = new Date();
+        const month = todayTime.getMonth() + 1;
+        const day = todayTime.getDate();
+        const year = todayTime.getFullYear();
+        return `${month}-${day}-${year}`;
+      }
+    %>
+
+    <!-- ====== MAIN ====== -->
+    <div class="container" id = 'main'>
+      <% if(title === "All Stats") {%>
+        <h2><%= title %></h2>
+        <div class="row">
+          <% let stat_fields = [
+              {display: 'Directors', src: 'director'},
+              {display: 'Writers', src: 'writer'},
+              {display: 'Content Ratings', src: 'rated'},
+              {display: 'Genres', src: 'genres'},
+              {display: 'Director Genders', src: 'director_gender'},
+              {display: 'Writer Genders', src: 'writer_gender'},
+              {display: 'Runtimes', src: 'runtime'},
+              {display: 'Themes', src: 'themes'},
+            ] %>
+          <% stat_fields.forEach((stat) => {%>
+            <div class="col-lg-3 col-md-3">
+              <a href= <%= '/stats/' + stat.src %> ><p class = 'stat_link'><%= stat.display %></p></a>
+            </div>
+          <%}) %>
+        </div>
+      <% } else { %>
+        <h2><%= title %> statistics</h2>
+        <br>
+        <%
+          // get averages
+          for (let i = 0; i < movieArray.length; i++) {
+            movieArray[i].total_average = 0;
+            movieArray[i].entertainment_average = 0;
+            movieArray[i].plot_average = 0;
+            movieArray[i].style_average = 0;
+            movieArray[i].bias_average = 0;
+            movieArray[i][1].forEach((movie) => {
+              movieArray[i].total_average += movie.total_rating;
+              movieArray[i].entertainment_average += movie.entertainment_rating;
+              movieArray[i].plot_average += movie.plot_rating;
+              movieArray[i].style_average += movie.style_rating;
+              movieArray[i].bias_average += movie.bias_rating;
+            });
+            movieArray[i].total_average = (movieArray[i].total_average / movieArray[i][1].length).toFixed(2);
+            movieArray[i].entertainment_average =(movieArray[i].entertainment_average / movieArray[i][1].length).toFixed(2);
+            movieArray[i].plot_average = (movieArray[i].plot_average / movieArray[i][1].length).toFixed(2);
+            movieArray[i].style_average = (movieArray[i].style_average / movieArray[i][1].length).toFixed(2);
+            movieArray[i].bias_average = (movieArray[i].bias_average / movieArray[i][1].length).toFixed(2);
+          }
+
+          movieArray.sort((a,b) => a[1].length - b[1].length);
+          const highestTotalRating = movieArray.concat().sort((a, b) => b.total_average - a.total_average);
+          const highestStyleRating = movieArray.concat().sort((a, b) => b.style_average - a.style_average);
+          const highestEntertainmentRating = movieArray.concat().sort((a, b) => b.entertainment_average - a.entertainment_average);
+          const highestPlotRating = movieArray.concat().sort((a, b) => b.plot_average - a.plot_average);
+          const highestBiasRating = movieArray.concat().sort((a, b) => b.bias_average - a.bias_average);
+          const mostViewed = movieArray.concat().sort((a, b) => b[1].length - a[1].length);
+
+        %>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 align_center">
+            <h3 class = 'bold'>Highest Rated</h3>
+            <div class="stat_box">
+              <% highestTotalRating.forEach((value) => { %>
+                <p><a href = "/stats/<%=title%>/<%=value[0]%>"><span class = 'primary '><%= value[0] %> : </span> <%= value.total_average %> </a><span class = 'primary float_right'><%= value[1].length %></span></p>
+              <% }) %>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 align_center">
+            <h3 class = 'bold'>Most Viewed</h3>
+            <div class="stat_box">
+              <% mostViewed.forEach((value) => { %>
+                <p><a href = "/stats/<%=title%>/<%=value[0]%>"><span class = 'primary '><%= value[0] %> : </span> <%= value[1].length %> </a></p>
+              <% }) %>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 align_center">
+            <h3 class = 'bold'>Favorite</h3>
+            <div class="stat_box">
+              <% highestBiasRating.forEach((value) => { %>
+                <p><a href = "/stats/<%=title%>/<%=value[0]%>"><span class = 'primary '><%= value[0] %> : </span> <%= value.bias_average %>  </a><span class = 'primary float_right'><%= value[1].length %></span></p>
+              <% }) %>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 align_center">
+            <br><br>
+
+            <h3 class = 'bold'>Most Stylish</h3>
+            <div class="stat_box">
+              <% highestStyleRating.forEach((value) => { %>
+                <p><a href = "/stats/<%=title%>/<%=value[0]%>"><span class = 'primary '><%= value[0] %> : </span> <%= value.style_average %>  </a><span class = 'primary float_right'><%= value[1].length %></span></p>
+              <% }) %>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 align_center">
+            <br><br>
+
+            <h3 class = 'bold'>Most Entertaining</h3>
+            <div class="stat_box">
+              <% highestEntertainmentRating.forEach((value) => { %>
+                <p><a href = "/stats/<%=title%>/<%=value[0]%>"><span class = 'primary '><%= value[0] %> : </span> <%= value.entertainment_average %> </a><span class = 'primary float_right'><%= value[1].length %></span> </p>
+              <% }) %>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 align_center">
+            <br><br>
+
+            <h3 class = 'bold'>Best Plots</h3>
+            <div class="stat_box">
+              <% highestPlotRating.forEach((value) => { %>
+                <p><a href = "/stats/<%=title%>/<%=value[0]%>"><span class = 'primary '><%= value[0] %> : </span> <%= value.plot_average %>  </a><span class = 'primary float_right'><%= value[1].length %></span></p>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- ===== Add Movie ===== -->
+    <div class="modal fade" id="movieModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title primary">Add a new movie</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row" id = 'search_page_1'>
+              <div class="col-lg-3">
+                <span class = 'primary'> Search : </span>
+              </div>
+              <div class="col-lg-9">
+                <input type="text" class = 'login_input' name = 'searchBar' id = 'searchBar'/>
+              </div>
+            </div>
+            <div class="container" id = 'search_page_2'>
+            </div>
+            <div class="container" id = 'search_page_3'>
+              <div class="col-lg-12 col-md-12" id="search_poster_wrapper">
+              </div> <br>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 align_right">
+                  <p class = 'primary'>Entertainment Rating :</p>
+                </div>
+                <div class="col-lg-6 col-md-6 align_left">
+                  <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_input'> / 5
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 align_right">
+                  <p class = 'primary'>Plot Rating :</p>
+                </div>
+                <div class="col-lg-6 col-md-6 align_left">
+                  <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_input'> / 5
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 align_right">
+                  <p class = 'primary'>Style Rating :</p>
+                </div>
+                <div class="col-lg-6 col-md-6 align_left">
+                  <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_input'> / 5
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 align_right">
+                  <p class = 'primary'>Bias :</p>
+                </div>
+                <div class="col-lg-6 col-md-6 align_left">
+                  <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_input'> / 5
+                </div>
+              </div> <br>
+              <div class="row">
+                <div id='themeWrapper' class = 'col-lg-12 col-md-12'>
+
+                </div>
+                <div class="col-lg-12 col-md-12">
+                  <button type="button" class="btn btn-secondary" onclick = 'addTheme()'>+ Add Theme</button>
+                </div>
+              </div> <br>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 align_right">
+                  <p class = 'primary padded_sm'>Date Viewed : </p>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                  <input type="date" id='viewingDate' value="<%=getFormattedDate()%>" class = 'login_input'/>
+                </div>
+              </div>
+            </div>
+            </div>
+          <div class="modal-footer" id = 'footer_main'>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="primary_btn btn" onclick= "search()" >Search</button>
+          </div>
+          <div class="modal-footer" id = 'submit_footer'>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="primary_btn btn" id = 'submitButton'>Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Footer -->
+    <div class="footer fixed-bottom">
+      <p> © JACKSON PROWELL</p>
+    </div>
+    <!-- Footer -->
+
+    <script type="text/javascript" src = '/js/main.js'></script>
+    <script type="text/javascript" src = '/js/jquery.min.js'></script>
+    <script type="text/javascript" src = '/js/bootstrap.min.js'></script>
+
+  </body>
+</html>

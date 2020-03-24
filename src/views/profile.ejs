@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+
+    <!-- CSS links -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+
+  </head>
+  <body>
+
+    <!-- ====== NAV ====== -->
+    <nav class="navbar navbar-expand-lg">
+      <a class="navbar-brand" id = 'logo' href="/movies">INTAKE</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <span class = 'col-lg-7 col-md-7'></span>
+      <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/movies">MOVIES</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/stats">STATS</a>
+          </li>
+          <li class="nav-item active">
+              <a class="nav-link" href="/profile">PROFILE</a>
+          </li>
+          <li class="nav_button">
+            <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>
+              <span class="nav-link">+</span>
+              <div class="add_hover clicker_cursor">
+                Add a movie
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <%
+      function getFormattedDate() {
+        const todayTime = new Date();
+        const month = todayTime.getMonth() + 1;
+        const day = todayTime.getDate();
+        const year = todayTime.getFullYear();
+        return `${month}-${day}-${year}`;
+      }
+    %>
+
+    <%
+      movies.sort((a,b) => a.title > b.title)
+
+    %>
+
+    <!-- ====== MAIN ====== -->
+    <div class="container" id = 'main'>
+      <div class="row">
+        <div class = 'col-lg-12 col-md-12 bottom_divider'>
+          <h2><%= username %></h2>
+          <a href = "#account_settings" data-toggle="collapse">
+            <svg height="10" width="120" class = 'hover_opacity clicker_cursor float_right bump_up'>
+              <circle cx="17" cy="5" r="3" fill="#D5D5D5" />
+              <circle cx="32" cy="5" r="3" fill="#D5D5D5" />
+              <circle cx=47 cy="5" r="3" fill="#D5D5D5" />
+            </svg>
+          </a>
+          <div class="movie_options collapse col-lg-1 col-md-1 float_right" id = 'account_settings'>
+            <p class = 'clicker_cursor bold'><a  data-toggle="modal" data-target="#confirmationModal">Logout</a></p>
+          </div>
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class="col-lg-12 col-md-12r">
+          <br>
+          <h3> 19 Club </h3>
+          <br>
+          <div class="row">
+            <% movies.forEach((movie) => { %>
+              <% if(movie.total_rating >= 19) { %>
+              <div class="col-lg-4 col-md-4">
+                <a href = <%= '/movies/' + movie._id %>><img src=<%= movie.poster %> width="200" alt=<%= movie.title %> class = 'poster'/></a>
+                <p class = 'rating_overview'><%= movie.total_rating %> / 20</p>
+              </div>
+            <% } %>
+            <% }) %>
+          </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="container">
+              <p class = 'warning'>Are you sure?</p>
+            </div>
+            <br><br>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="primary_btn btn" onclick = 'logout()'>Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ===== Add Movie ===== -->
+    <div class="modal fade" id="movieModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title primary">Add a new movie</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row" id = 'search_page_1'>
+              <div class="col-lg-3">
+                <span class = 'primary'> Search : </span>
+              </div>
+              <div class="col-lg-9">
+                <input type="text" class = 'login_input' name = 'searchBar' id = 'searchBar'/>
+              </div>
+            </div>
+            <div class="container" id = 'search_page_2'>
+            </div>
+            <div class="container" id = 'search_page_3'>
+              <div class="col-lg-12 col-md-12" id="search_poster_wrapper">
+              </div> <br>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 align_right">
+                  <p class = 'primary'>Entertainment Rating :</p>
+                </div>
+                <div class="col-lg-6 col-md-6 align_left">
+                  <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_input'> / 5
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 align_right">
+                  <p class = 'primary'>Plot Rating :</p>
+                </div>
+                <div class="col-lg-6 col-md-6 align_left">
+                  <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_input'> / 5
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 align_right">
+                  <p class = 'primary'>Style Rating :</p>
+                </div>
+                <div class="col-lg-6 col-md-6 align_left">
+                  <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_input'> / 5
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 align_right">
+                  <p class = 'primary'>Bias :</p>
+                </div>
+                <div class="col-lg-6 col-md-6 align_left">
+                  <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_input'> / 5
+                </div>
+              </div> <br>
+              <div class="row">
+                <div id='themeWrapper' class = 'col-lg-12 col-md-12'>
+
+                </div>
+                <div class="col-lg-12 col-md-12">
+                  <button type="button" class="btn btn-secondary" onclick = 'addTheme()'>+ Add Theme</button>
+                </div>
+              </div> <br>
+              <div class="row">
+                <div class="col-lg-6 col-md-6 align_right">
+                  <p class = 'primary padded_sm'>Date Viewed : </p>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                  <input type="date" id='viewingDate' value="<%=getFormattedDate()%>" class = 'login_input'/>
+                </div>
+              </div>
+            </div>
+            </div>
+          <div class="modal-footer" id = 'footer_main'>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="primary_btn btn" onclick= "search()" >Search</button>
+          </div>
+          <div class="modal-footer" id = 'submit_footer'>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="primary_btn btn" id = 'submitButton'>Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src = '/js/main.js'></script>
+    <script type="text/javascript" src = '/js/jquery.min.js'></script>
+    <script type="text/javascript" src = '/js/bootstrap.min.js'></script>
+
+
+    <!-- Footer -->
+    <div class="footer fixed-bottom">
+      <p> © JACKSON PROWELL</p>
+    </div>
+
+  </body>
+</html>
