@@ -142,7 +142,8 @@ const addMovie = (imdbid) => {
   }).then(async (response) => {
     const serverResponse = await response.json();
     if (serverResponse) {
-      setTimeout(() => window.location.reload(), 200);
+      console.log(serverResponse);
+      // setTimeout(() => window.location.reload(), 200);
     }
   });
 };

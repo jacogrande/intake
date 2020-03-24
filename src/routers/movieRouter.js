@@ -29,6 +29,7 @@ movieRouter.route('/')
     const { imdbid } = req.body;
     const apiData = await omdb.fetch(imdbid); // fetch movie info using omdb api
 
+
     const {
       entertainment_rating, plot_rating, style_rating, bias_rating, themes, director_gender, writer_gender, date,
     } = req.body; // pull data from post request
@@ -52,6 +53,7 @@ movieRouter.route('/')
       date,
       user_id: req.user.id,
     };
+    deubg(apiData);
 
     // check if the movie already exists in the database
     const movieExists = await movieController.findMovieByTitle(apiData.Title);
