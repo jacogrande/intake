@@ -1,6 +1,5 @@
 const express = require('express');
 const debug = require('debug')('index');
-const uniqid = require('uniqid');
 const passport = require('passport');
 const auth = require('../../auth.js');
 const omdb = require('../apis/omdb.js');
@@ -53,7 +52,7 @@ movieRouter.route('/')
       date,
       user_id: req.user.id,
     };
-    deubg(apiData);
+    debug(apiData);
 
     // check if the movie already exists in the database
     const movieExists = await movieController.findMovieByTitle(apiData.Title);
