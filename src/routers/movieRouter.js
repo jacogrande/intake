@@ -52,7 +52,7 @@ movieRouter.route('/')
       date,
       user_id: req.user.id,
     };
-    debug(apiData);
+    debug(req.user);
 
     // check if the movie already exists in the database
     const movieExists = await movieController.findMovieByTitle(apiData.Title);
