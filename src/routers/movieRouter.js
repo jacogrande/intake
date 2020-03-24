@@ -54,7 +54,6 @@ movieRouter.route('/')
     };
 
     // check if the movie already exists in the database
-    const movieSearchResults = db.findByValue(movies, 'title', apiData.Title, true);
     const movieExists = await movieController.findMovieByTitle(apiData.Title);
 
     if (movieExists) { // if the movie exists in the db

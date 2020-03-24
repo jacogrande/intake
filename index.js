@@ -13,7 +13,6 @@ const MongoStore = require('connect-mongo')(session);
 const User = require('./src/schemas/user.js');
 
 const mongoUri = process.env.MONGO_URI;
-debug(mongoUri);
 
 // mongoose implementation
 mongoose.connect(mongoUri, { useNewUrlParser: true });

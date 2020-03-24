@@ -131,7 +131,6 @@ const addMovie = (imdbid) => {
   } else {
     date = Date.now().toString();
   }
-  console.log(date);
   fetch('/movies', {
     method: 'post',
     body: JSON.stringify({
