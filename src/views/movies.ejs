@@ -21,7 +21,7 @@
       <span class = 'col-lg-7 col-md-7'></span>
       <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
+          <li class="nav-item">
               <a class="nav-link" href="/">ABOUT</a>
           </li>
           <li class="nav-item active">
@@ -147,9 +147,9 @@
             </svg>
             </a></p>
             <p><span class = 'primary'>Total Rating : </span> <a href = "/stats/total_rating/<%=selection.total_rating%>"><%=selection.total_rating %> / 20 </a>
-              <% if(selection.total_rating >= 18) { %>
+              <% if(selection.total_rating > 18) { %>
                 <span class="revealer">
-                  <span class = 'flame_text'>Certified Flame</span>
+                  <span class = 'flame_text'>19 Club</span>
                   <img src="/src/images/flame.png" width = '25px' height = '25px' class = 'flame' alt="Flame" />
                 </span>
               <% } %>
