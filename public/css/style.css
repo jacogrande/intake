@@ -459,6 +459,25 @@ textarea:active, textarea:focus {
   margin-top: -25px;
 }
 
+/* ===== ABOUT ====== */
+#jumbo {
+  width: 100%;
+  height: 49vw;
+  background-image: linear-gradient(to bottom right, #000, #9c2d75);
+  text-align: center;
+  border-bottom: 3px solid #181f22;
+}
+
+#jumbo .super_logo {
+  font-size: 15vw;
+  font-weight: 150;
+  letter-spacing: 6vw;
+  margin-left: 5vw;
+  height:100%;
+  padding: 12vw 0;
+}
+
+
 
 
 /*  */

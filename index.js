@@ -31,7 +31,7 @@ const userRouter = require('./src/routers/userRouter.js');
 
 
 app.use(session({
-  secret: 'secret',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   store: new MongoStore({ mongooseConnection: db }),
@@ -62,25 +62,12 @@ app.use('/stats', statisticRouter);
 app.use('/', userRouter);
 
 app.get('/', (req, res) => {
-  res.redirect('/movies');
+  if (req.user) {
+    res.render('about', { loggedIn: true });
+  } else {
+    res.render('about', { loggedIn: false });
+  }
 });
 
-app.post('/register', (req, res) => {
-  User.register(new User({ username: req.body.username, email: req.body.email }), req.body.password, (err, account) => {
-    if (err) return res.send(err);
-    passport.authenticate('local')(req, res, () => {
-      res.send('success');
-    });
-  });
-});
-
-app.post('/login', passport.authenticate('local'), (req, res) => {
-  res.send('success');
-  // res.redirect('/test');
-});
-
-app.get('/test', (req, res) => {
-  res.send(req.user);
-});
 
 app.listen(PORT, () => debug(`Socket to me on port ${chalk.green(PORT)}...`));

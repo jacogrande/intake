@@ -14,13 +14,16 @@
 
     <!-- ====== NAV ====== -->
     <nav class="navbar navbar-expand-lg">
-      <a class="navbar-brand" id = 'logo' href="/movies">INTAKE</a>
+      <a class="navbar-brand" id = 'logo' href="/">INTAKE</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <span class = 'col-lg-7 col-md-7'></span>
       <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
         <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+              <a class="nav-link" href="/">ABOUT</a>
+          </li>
           <li class="nav-item active">
             <a class="nav-link" href="/movies">MOVIES</a>
           </li>
@@ -178,15 +181,8 @@
           <div class="col-lg-6 col-md-6" >
             <div id = 'reviewSection'>
               <p class = 'padded_sm bold'>Reviews</p>
-              <% if(selection.reviews.length > 0) { %>
-
-                  <% selection.reviews.forEach((review) => { %>
-                    <p><span class = 'primary padded_sm'>I said : </span> <%= review.review %> (<%= getFormattedDate(Date.now()) %>)</p>
-                  <% }) %>
-              <% } %>
+              <p>Coming soon ... </p>
             </div>
-
-            <a  data-toggle="modal" data-target="#reviewModal" onclick = 'focusModal()'><p class = 'primary padded_sm clicker_cursor'>Add a Review</p></a>
           </div>
         </div>
       <% } %>
@@ -197,29 +193,6 @@
     <!-- ===== Review Modal ===== -->
     <!-- Modal -->
     <% if(locals.selection){ %>
-
-    <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title primary">Add a review</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="container">
-              <textarea name="review" rows="8" cols="50" id = 'review_textarea'></textarea>
-            </div>
-            <br><br>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "<%= `submitReview(${selection._id})` %>" >Submit</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
