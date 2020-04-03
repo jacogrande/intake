@@ -18,6 +18,10 @@ body{
   color: rgb(238, 77, 88);
 }
 
+.clear {
+  opacity: 0;
+}
+
 .hidden {
   visibility: hidden;
 }
