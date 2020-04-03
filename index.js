@@ -9,6 +9,7 @@ const helmet = require('helmet');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
+const compression = require('compression');
 
 const User = require('./src/schemas/user.js');
 
@@ -57,6 +58,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
+app.use(compression());
 
 
 // passport middleware
