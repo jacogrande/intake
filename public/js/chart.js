@@ -144,4 +144,5 @@ const renderCharts = async (data) => {
   drawChart(data.ratingList, 'content_chart');
   drawViewingTimeline(data.weeks, 'view_graph');
   drawReleaseTimeline(data.decades, 'movie_graph');
+  removeLoadingScreen();
 };

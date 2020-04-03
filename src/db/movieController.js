@@ -141,6 +141,8 @@ const findMoviesByUser = async (movieList, userId) => {
   return filteredMovies;
 };
 
+const getAllMovies = async () => await Movie.find();
+
 module.exports = {
   addMovie,
   findMovieByTitle,
@@ -149,4 +151,5 @@ module.exports = {
   addDates,
   findMoviesByUser,
   removePresence,
+  getAllMovies,
 };

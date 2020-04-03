@@ -1,8 +1,18 @@
 const axios = require('axios');
 const debug = require('debug')('index');
 
-const omdb_api_key = process.env.OMDB_API_KEY;
-const tmdb_api_key = process.env.TMDB_API_KEY;
+let omdb_api_key = '';
+let tmdb_api_key = '';
+
+if (process.env.NODE_ENV === 'production') {
+  omdb_api_key = process.env.OMDB_API_KEY;
+  tmdb_api_key = process.env.TMDB_API_KEY;
+} else if (process.env.NODE_ENV === 'dev') {
+  const config = require('../../config.js');
+  omdb_api_key = config.OMDB_API_KEY;
+  tmdb_api_key = config.TMDB_API_KEY;
+}
+
 
 // omdb api module
 const Omdb = () => {
@@ -12,8 +22,14 @@ const Omdb = () => {
     try { // try and get movie data using imdbid
       movieData = await axios.get(url);
       movieData = movieData.data;
+      debug(movieData.Type);
+      if (movieData.Type != 'movie') {
+        throw 'not a movie';
+      }
     } catch (err) {
-      throw err;
+      return {
+        err,
+      };
     }
     // debug(movieData);
     url = `https://api.themoviedb.org/3/find/${imdbid}?api_key=${tmdb_api_key}&language=en-US&external_source=imdb_id`;

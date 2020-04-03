@@ -8,11 +8,15 @@ const db = require('./db.js');
 const movieController = require('../db/movieController');
 const userController = require('../db/userController');
 
-
 const movieRouter = express.Router();
 
 movieRouter.route('/')
   .get(passport.isAuthenticated, async (req, res) => {
+    const isAdmin = db.checkCredentials(req.query.admin_key);
+    if (isAdmin) {
+      const allMovies = await movieController.getAllMovies();
+      return res.json(allMovies);
+    }
     let movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
 
     movieList = movieList.map((movie) => ({
@@ -27,6 +31,9 @@ movieRouter.route('/')
   .post(passport.isAuthenticated, async (req, res) => {
     const { imdbid } = req.body;
     const apiData = await omdb.fetch(imdbid); // fetch movie info using omdb api
+    if (apiData.err) {
+      return res.send({ error: apiData.err });
+    }
 
 
     const {
@@ -99,18 +106,26 @@ movieRouter.route('/')
 movieRouter.route('/:id')
   .get(passport.isAuthenticated, async (req, res) => { // returns all data on identified movie
     const { id } = req.params;
-    const movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
-    const selection = db.find(movieList, id);
-
-    if (selection) {
-      res.render('movies', { selection });
-    } else res.redirect('../');
+    try {
+      const movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
+      const selection = db.find(movieList, id);
+      if (selection) {
+        res.render('movies', { selection });
+      } else res.redirect('/movies');
+    } catch (err) {
+      res.send({ error: err });
+    }
   })
   .delete(passport.isAuthenticated, async (req, res) => {
     const { id } = req.params;
-    await movieController.removePresence(req.user._id, id);
-    await userController.removeMovie(req.user._id, id);
-    res.send('success');
+    try {
+      await movieController.removePresence(req.user._id, id);
+      await userController.removeMovie(req.user._id, id);
+      res.send('success');
+    } catch (err) {
+      debug(err);
+      res.sendStatus(401);
+    }
   });
 
 movieRouter.route('/search/:title')

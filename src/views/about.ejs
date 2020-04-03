@@ -11,183 +11,186 @@
   </head>
   <body>
 
-    <!-- ====== NAV ====== -->
-    <nav class="navbar navbar-expand-lg">
-      <a class="navbar-brand" id = 'logo' href="/">INTAKE</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <span class = 'col-lg-7 col-md-7'></span>
-      <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
-              <a class="nav-link" href="/">ABOUT</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/movies">MOVIES</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/stats">STATS</a>
-          </li>
-          <% if(loggedIn) { %>
-          <li class="nav-item">
-              <a class="nav-link" href="/profile">PROFILE</a>
-          </li>
-          <li class="nav_button">
-            <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>
-              <span class="nav-link">+</span>
-              <div class="add_hover clicker_cursor">
-                Add a movie
-              </div>
-            </a>
-          </li>
-          <% } else { %>
-            <li class="nav-item">
-                <a class="nav-link" href="/login">LOGIN</a>
+    <div id = 'page'>
+      <!-- ====== NAV ====== -->
+      <nav class="navbar navbar-expand-lg navbar_home">
+        <a class="navbar-brand" id = 'logo' href="/">INTAKE</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <span class = 'col-lg-7 col-md-7'></span>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">ABOUT</a>
             </li>
-          <% } %>
-        </ul>
+            <li class="nav-item">
+              <a class="nav-link" href="/movies">MOVIES</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/stats">STATS</a>
+            </li>
+            <% if(loggedIn) { %>
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">PROFILE</a>
+            </li>
+            <li class="nav_button">
+              <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>
+                <span class="nav-link">+</span>
+                <div class="add_hover clicker_cursor">
+                  Add a movie
+                </div>
+              </a>
+            </li>
+            <% } else { %>
+              <li class="nav-item">
+                  <a class="nav-link" href="/login">LOGIN</a>
+              </li>
+            <% } %>
+          </ul>
+        </div>
+      </nav>
+
+      <%
+        function getFormattedDate(date) {
+          const todayTime = new Date(parseInt(date));
+          const month = todayTime.getMonth() + 1;
+          const day = todayTime.getDate();
+          const year = todayTime.getFullYear();
+          return `${month}-${day}-${year}`;
+        }
+      %>
+
+      <!-- ====== MAIN ====== -->
+      <div id = 'jumbo'>
+        <h1 class = 'super_logo fade_in_slow'>INTAKE</h1>
       </div>
-    </nav>
 
-    <%
-      function getFormattedDate(date) {
-        const todayTime = new Date(parseInt(date));
-        const month = todayTime.getMonth() + 1;
-        const day = todayTime.getDate();
-        const year = todayTime.getFullYear();
-        return `${month}-${day}-${year}`;
-      }
-    %>
+      <div class="container" id = 'main'>
+        <div class="row bottom_divider">
+          <div class="col-lg-6 col-md-6 right_border">
+            <h2>Purpose</h2>
+            <p class = 'align_left indent'>Intake is a tool created to track media consumption. Add movies to your feed, rate them, review them, and then learn more about your tastes through the use of our built-in viewing statistics. </p>
+          </div>
+          <div class="col-lg-6 col-md-6">
+            <h2>Criteria</h2>
+            <p class = 'align_left'>Intake has unique criteria that make up its rating system. Each rating is out of 5.</p>
+            <p class = 'align_left'><span class = 'primary'>Entertainment : </span>How fun was the movie?</p>
+            <p class = 'align_left'><span class = 'primary'>Plot : </span>How strong was the plot? How about the characters?</p>
+            <p class = 'align_left'><span class = 'primary'>Style : </span>Did the movie have a consistent and powerful style? How interesting was the cinematography?</p>
+            <p class = 'align_left'><span class = 'primary'>Bias : </span>Sometimes the best movies aren't our favorite movies, and vice versa. Look back at the other ratings. Does the movie deserve such high praise, or was it was underrated? This if your chance to self correct and give a total rating that more accurately reflects your opinion of the movie. </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-2 col-md-2"></div>
+          <div class="col-lg-8 col-md-8">
+            <br><br>
+            <h2>Upcoming Updates</h2>
+            <p><span class = 'primary'>Stats for all movies : </span> A statistics page will be added that contain data on all added movies</p>
+            <p><span class = 'primary'>Friends : </span> A new friends page will be added that will allow you to add friends and view their public statistics and ratings</p>
+            <p><span class = 'primary'>Reviews : </span> Elaborate on your opinions with reviews. Reviews will be public to your friends</p>
+          </div>
+          <div class="col-lg-2 col-md-2"></div>
+        </div>
+      </div>
 
-    <!-- ====== MAIN ====== -->
-    <div id = 'jumbo'>
-      <h1 class = 'super_logo'>INTAKE</h1>
+      <!-- ===== Movie Modal ===== -->
+      <div class="modal fade" id="movieModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title primary">Add a new movie</h5>
+            </div>
+            <div class="modal-body">
+              <p id = 'searchError' class = 'warning'></p>
+              <div class="row" id = 'search_page_1'>
+                <div class="col-lg-3">
+                  <span class = 'primary'> Search : </span>
+                </div>
+                <div class="col-lg-9">
+                  <input type="text" class = 'login_input' name = 'searchBar' id = 'searchBar'/>
+                </div>
+              </div>
+              <div class="container" id = 'search_page_2'>
+              </div>
+              <div class="container" id = 'search_page_3'>
+                <div class="col-lg-12 col-md-12" id="search_poster_wrapper">
+                </div> <br>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Entertainment Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_input'> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Plot Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_input'> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Style Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_input'> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Bias :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_input'> / 5
+                  </div>
+                </div> <br>
+                <div class="row">
+                  <div class="col-lg-2 col-md-2">
+
+                  </div>
+                  <div id='themeWrapper' class = 'col-lg-10 col-md-10'>
+
+                  </div>
+                  <div class="col-lg-2 col-md-2">
+
+                  </div>
+                  <div class="col-lg-12 col-md-12">
+                    <button type="button" class="btn btn-secondary" onclick = 'addTheme()'>+ Add Theme</button>
+                  </div>
+                </div> <br>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary padded_sm'>Date Viewed : </p>
+                  </div>
+                  <div class="col-lg-6 col-md-6">
+                    <input type="date" id='viewingDate' value="<%=getFormattedDate()%>" class = 'login_input'/>
+                  </div>
+                </div>
+              </div>
+              </div>
+            <div class="modal-footer" id = 'footer_main'>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick = 'refreshMovieModal()'>Close</button>
+              <button type="button" class="primary_btn btn" onclick= "search()" id = 'searchButton'>Search</button>
+            </div>
+            <div class="modal-footer" id = 'submit_footer'>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="primary_btn btn" id = 'submitButton' data-dismiss = 'modal'>Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="container" id = 'main'>
-      <div class="row bottom_divider">
-        <div class="col-lg-6 col-md-6 right_border">
-          <h2>Purpose</h2>
-          <p class = 'align_left indent'>Intake is a tool created to track media consumption. Add movies to your feed, rate them, review them, and then learn more about your tastes through the use of our built in viewing statistics. </p>
-        </div>
-        <div class="col-lg-6 col-md-6">
-          <h2>Criteria</h2>
-          <p class = 'align_left'>Intake has unique criteria that make up its rating system. Each rating is out of 5.</p>
-          <p class = 'align_left'><span class = 'primary'>Entertainment : </span>How fun was the movie?</p>
-          <p class = 'align_left'><span class = 'primary'>Plot : </span>How strong was the plot? How about the characters?</p>
-          <p class = 'align_left'><span class = 'primary'>Style : </span>Did the movie have a consistent and powerful style? How interesting was the cinematography?</p>
-          <p class = 'align_left'><span class = 'primary'>Bias : </span>Sometimes the best movies aren't our favorite movies, and vice versa. Look back at the other ratings. Does the movie deserve such high praise, or was it was underrated? This if your chance to self correct and give a total rating that more accurately reflects your opinion of the movie. </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-2 col-md-2"></div>
-        <div class="col-lg-8 col-md-8">
-          <br><br>
-          <h2>Upcoming Updates</h2>
-          <p><span class = 'primary'>Stats for all movies : </span> A statistics page will be added that contain data on all added movies</p>
-          <p><span class = 'primary'>Friends : </span> A new friends page will be added that will allow you to add friends and view their public statistics and ratings</p>
-          <p><span class = 'primary'>Reviews : </span> Ellaborate on your opinions with reviews. Reviews will be public to your friends</p>
-        </div>
-        <div class="col-lg-2 col-md-2"></div>
-      </div>
-    </div>
-
-    <!-- ===== Add Movie ===== -->
-    <div class="modal fade" id="movieModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title primary">Add a new movie</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="row" id = 'search_page_1'>
-              <div class="col-lg-3">
-                <span class = 'primary'> Search : </span>
-              </div>
-              <div class="col-lg-9">
-                <input type="text" class = 'login_input' name = 'searchBar' id = 'searchBar'/>
-              </div>
-            </div>
-            <div class="container" id = 'search_page_2'>
-            </div>
-            <div class="container" id = 'search_page_3'>
-              <div class="col-lg-12 col-md-12" id="search_poster_wrapper">
-              </div> <br>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary'>Entertainment Rating :</p>
-                </div>
-                <div class="col-lg-6 col-md-6 align_left">
-                  <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_input'> / 5
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary'>Plot Rating :</p>
-                </div>
-                <div class="col-lg-6 col-md-6 align_left">
-                  <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_input'> / 5
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary'>Style Rating :</p>
-                </div>
-                <div class="col-lg-6 col-md-6 align_left">
-                  <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_input'> / 5
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary'>Bias :</p>
-                </div>
-                <div class="col-lg-6 col-md-6 align_left">
-                  <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_input'> / 5
-                </div>
-              </div> <br>
-              <div class="row">
-                <div class="col-lg-2 col-md-2">
-
-                </div>
-                <div id='themeWrapper' class = 'col-lg-10 col-md-10'>
-
-                </div>
-                <div class="col-lg-2 col-md-2">
-
-                </div>
-                <div class="col-lg-12 col-md-12">
-                  <button type="button" class="btn btn-secondary" onclick = 'addTheme()'>+ Add Theme</button>
-                </div>
-              </div> <br>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary padded_sm'>Date Viewed : </p>
-                </div>
-                <div class="col-lg-6 col-md-6">
-                  <input type="date" id='viewingDate' value="<%=getFormattedDate()%>" class = 'login_input'/>
-                </div>
-              </div>
-            </div>
-            </div>
-          <div class="modal-footer" id = 'footer_main'>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="primary_btn btn" onclick= "search()" >Search</button>
-          </div>
-          <div class="modal-footer" id = 'submit_footer'>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="primary_btn btn" id = 'submitButton'>Submit</button>
-          </div>
-        </div>
-      </div>
+    <div id="loadingScreen">
+      <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
     </div>
 
 
     <!-- Footer -->
-    <div class="footer fixed-bottom">
+    <div class="footer footer_home">
       <p> © JACKSON PROWELL</p>
     </div>
     <!-- Footer -->

@@ -69,3 +69,41 @@ const register = async () => { // function for registering users
     document.getElementById('invalid_modal_label').style.opacity = 1; // notify the user
   }
 };
+
+const resetPassword = () => {
+  loadingScreen();
+  const email = document.getElementById('email_reset_input').value;
+  fetch('/passwordReset', {
+    method: 'post',
+    body: JSON.stringify({ email }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then((response) => {
+    console.log(response);
+    email.value = '';
+    document.getElementById('resetSuccess').style.visibility = 'visible';
+    removeLoadingScreen();
+  });
+};
+
+const submitNewPassword = () => {
+  loadingScreen();
+  const password = document.getElementById('new_password_input').value;
+  const confirmation = document.getElementById('password_confirmation_input');
+
+  if (password != confirmation.value) {
+    console.log('tough');
+    document.getElementById('passwords_dont_match').style.visibility = 'visible';
+    confirmation.value = '';
+    return removeLoadingScreen();
+  }
+
+  fetch('', {
+    method: 'post',
+    body: JSON.stringify({ password }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then((response) => window.location.pathname = '/login');
+};

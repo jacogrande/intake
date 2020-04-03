@@ -46,7 +46,7 @@
     </nav>
 
     <!-- ====== MAIN ====== -->
-    <div class="container " id = 'main'>
+    <div class="container fade_in" id = 'main'>
       <h2>Login</h2>
       <br>
       <div class="row align_center">
@@ -69,12 +69,12 @@
               <input type="password" name = 'password' class = 'login_input' id = 'password_input' />
             </div>
           </div> <br>
-          <div class="row float-right">
-            <div class="col-lg-8">
-              <a data-toggle="modal" data-target="#registerModal"><p class = 'primary primary_hover clicker_cursor'>Create a new account</p></a>
+          <div class="row">
+            <div class="col-lg-10 col-md-10">
+              <p class = 'clicker_cursor vertical_center float_right text_sm'><a data-toggle="modal" data-target="#registerModal" class = 'primary right_margin'>Create an account</a><a href = '/passwordReset' class = ''>Forgot Password</a></p>
             </div>
-            <div class="col-lg-4">
-              <button type="button" class="primary_btn btn " onclick = 'login()'>Submit</button>
+            <div class="col-lg-2 col-md-2">
+              <button type="button" class="primary_btn btn bump_left_sm" onclick = 'login()'>Submit</button>
             </div>
           </div>
         </div>

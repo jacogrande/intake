@@ -1,12 +1,16 @@
 const db = {};
 
 db.find = (movieList, id) => {
-  for (let i = 0; i < movieList.length; i++) { // find the selected movie
-    if (movieList[i]._id.toString() === id) {
-      return movieList[i];
+  try {
+    for (let i = 0; i < movieList.length; i++) { // find the selected movie
+      if (movieList[i]._id.toString() === id) {
+        return movieList[i];
+      }
     }
+    return null;
+  } catch (err) {
+    throw err;
   }
-  return null;
 };
 
 db.getValues = (movieList, property) => {
@@ -62,6 +66,19 @@ db.findByValue = function (movieList, property, value, extensive) {
     }
   }
   return results;
+};
+
+db.checkCredentials = (admin_key) => {
+  if (process.env.NODE_ENV === 'dev') {
+    if (admin_key === 'beese_churger') {
+      return true;
+    }
+  } else if (process.env.NODE_ENV === 'production') {
+    if (admin_key === process.env.ADMIN_KEY) {
+      return true;
+    }
+  }
+  return false;
 };
 
 module.exports = db;

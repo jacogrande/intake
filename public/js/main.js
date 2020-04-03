@@ -25,13 +25,22 @@ const submitReview = async (id) => {
   reviewSection.appendChild(newReview);
 };
 
-
-const deleteMovie = () => {
-  fetch(window.location.href, {
+const deleteMovie = async () => {
+  loadingScreen();
+  const res = await fetch(window.location.href, {
     method: 'delete',
-  }).then((response) => setTimeout(() => window.location.reload(), 200));
+  }).then((response) => response);
+  if (res.status === 401) {
+    console.log('error');
+  } else {
+    window.location.reload();
+  }
 };
 
+const displaySearchError = (err) => {
+  refreshMovieModal();
+  document.getElementById('searchError').innerHTML = err;
+};
 
 const rateMovie = (movie) => {
   document.getElementById('footer_main').style.visibility = 'hidden';
@@ -45,15 +54,18 @@ const rateMovie = (movie) => {
 };
 
 const displayMovieList = (movies) => {
+  document.getElementById('searchError').innerHTML = '';
   document.getElementById('search_page_1').style.visibility = 'hidden';
   const movieDisplay = document.getElementById('search_page_2');
   movieDisplay.style.display = 'block';
 
   let newRow = null;
 
+  let moviesAdded = 0;
   if (movies) {
     for (let i = 0; i < movies.length; i++) {
       if (movies[i].Poster === 'N/A') break;
+      if (movies[i].Type != 'movie') break;
       if (i % 2 === 0) {
         newRow = document.createElement('div');
         newRow.className = 'row';
@@ -65,15 +77,22 @@ const displayMovieList = (movies) => {
       moviePoster.innerHTML = `<img src = "${movies[i].Poster}" class = "poster clicker_cursor" />`;
       moviePoster.addEventListener('click', () => rateMovie(movies[i]));
       newRow.appendChild(moviePoster);
+      moviesAdded++;
     }
   } else {
-    console.log('movie not found');
+    displaySearchError('No movies found...');
+  }
+
+  if (moviesAdded === 0) {
+    displaySearchError('No movies found...');
+  } else {
+    document.getElementById('searchButton').style.display = 'none';
   }
 };
 
 const search = async () => {
   const title = document.getElementById('searchBar').value;
-  const results = await fetch(`/movies/search/${title}`).then((response) => response.json());
+  const results = await fetch(`/movies/search/${encodeURI(title)}`).then((response) => response.json());
   displayMovieList(results.results);
 };
 
@@ -88,6 +107,9 @@ const refreshMovieModal = () => { // cleans up the modal and refreshes it
   document.getElementById('plot_rating_input').value = '';
   document.getElementById('style_rating_input').value = '';
   document.getElementById('bias_rating_input').value = '';
+  document.getElementById('searchError').innerHTML = '';
+  document.getElementById('searchBar').value = '';
+  document.getElementById('searchButton').style.display = 'block';
 };
 
 const addTheme = () => { // adds a theme input to the modal
@@ -112,10 +134,10 @@ const addTheme = () => { // adds a theme input to the modal
 
 const addMovie = (imdbid) => {
   // get inputted ratings
-  const entertainment_rating = parseInt(document.getElementById('entertainment_rating_input').value);
-  const plot_rating = parseInt(document.getElementById('plot_rating_input').value);
-  const style_rating = parseInt(document.getElementById('style_rating_input').value);
-  const bias_rating = parseInt(document.getElementById('bias_rating_input').value);
+  const entertainment_rating = parseInt(document.getElementById('entertainment_rating_input').value) || 0;
+  const plot_rating = parseInt(document.getElementById('plot_rating_input').value) || 0;
+  const style_rating = parseInt(document.getElementById('style_rating_input').value) || 0;
+  const bias_rating = parseInt(document.getElementById('bias_rating_input').value) || 0;
 
   // get inputted themes
   const themes = [];
@@ -131,6 +153,9 @@ const addMovie = (imdbid) => {
   } else {
     date = Date.now().toString();
   }
+
+  loadingScreen();
+
   fetch('/movies', {
     method: 'post',
     body: JSON.stringify({
@@ -142,7 +167,7 @@ const addMovie = (imdbid) => {
   }).then(async (response) => {
     const serverResponse = await response.json();
     if (serverResponse) {
-      window.location.pathname = '/';
+      setTimeout(() => window.location.reload(), 500);
     }
   });
 };

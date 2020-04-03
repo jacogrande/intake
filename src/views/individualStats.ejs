@@ -12,282 +12,291 @@
   </head>
   <body>
 
-    <!-- ====== NAV ====== -->
-    <nav class="navbar navbar-expand-lg">
-      <a class="navbar-brand" id = 'logo' href="/">INTAKE</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <span class = 'col-lg-7 col-md-7'></span>
-      <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-ite">
-              <a class="nav-link" href="/">ABOUT</a>
-          </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/movies">MOVIES</a>
+    <div id = 'page'>
+      <!-- ====== NAV ====== -->
+      <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" id = 'logo' href="/">INTAKE</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <span class = 'col-lg-7 col-md-7'></span>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-ite">
+                <a class="nav-link" href="/">ABOUT</a>
             </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/stats">STATS</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/profile">PROFILE</a>
-            </li>
-            <li class="nav_button">
-              <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>
-                <span class="nav-link">+</span>
-                <div class="add_hover clicker_cursor">
-                  Add a movie
-                </div>
-              </a>
-            </li>
-        </ul>
-      </div>
-    </nav>
+              <li class="nav-item">
+                  <a class="nav-link" href="/movies">MOVIES</a>
+              </li>
+              <li class="nav-item active">
+                  <a class="nav-link" href="/stats">STATS</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/profile">PROFILE</a>
+              </li>
+              <li class="nav_button">
+                <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>
+                  <span class="nav-link">+</span>
+                  <div class="add_hover clicker_cursor">
+                    Add a movie
+                  </div>
+                </a>
+              </li>
+          </ul>
+        </div>
+      </nav>
 
-    <%
-      function getFormattedDate() {
-        const todayTime = new Date();
-        const month = todayTime.getMonth() + 1;
-        const day = todayTime.getDate();
-        const year = todayTime.getFullYear();
-        return `${month}-${day}-${year}`;
-      }
-    %>
-
-    <%
-      // finding averages for all ratings
-      let total = 0;
-      let bias = 0;
-      let entertainment = 0;
-      let style = 0;
-      let plot = 0;
-
-      // counting themes, genres, and ratings
-      let themes = [];
-      let genres = [];
-      let content_ratings = {};
-
-      // count all writers
-      let allWriters = {};
-
-      // find average runtime
-      let runtime = 0;
-
-      // find # of reviews
-      let reviews = 0;
-
-      // record all viewing dates
-      let view_dates = [];
-
-      for(let i = 0; i < movies.length; i++){
-        total += movies[i].total_rating;
-        bias += movies[i].bias_rating;
-        entertainment += movies[i].entertainment_rating;
-        style += movies[i].style_rating;
-        plot += movies[i].plot_rating;
-        runtime += parseInt(movies[i].runtime.split(' ')[0]);
-
-        themes = themes.concat(movies[i].themes);
-        genres = genres.concat(movies[i].genres);
-
-        if(content_ratings[movies[i].rated]){
-          content_ratings[movies[i].rated]++;
-        } else {
-          content_ratings[movies[i].rated] = 1;
+      <%
+        function getFormattedDate() {
+          const todayTime = new Date();
+          const month = todayTime.getMonth() + 1;
+          const day = todayTime.getDate();
+          const year = todayTime.getFullYear();
+          return `${month}-${day}-${year}`;
         }
+      %>
 
-        reviews += movies[i].reviews.length;
+      <%
+        // finding averages for all ratings
+        let total = 0;
+        let bias = 0;
+        let entertainment = 0;
+        let style = 0;
+        let plot = 0;
 
-        movies[i].writer.forEach((writer) => {
-          if(allWriters[writer]){
-            allWriters[writer]++;
+        // counting themes, genres, and ratings
+        let themes = [];
+        let genres = [];
+        let content_ratings = {};
+
+        // count all writers
+        let allWriters = {};
+
+        // find average runtime
+        let runtime = 0;
+
+        // find # of reviews
+        let reviews = 0;
+
+        // record all viewing dates
+        let view_dates = [];
+
+        for(let i = 0; i < movies.length; i++){
+          total += movies[i].total_rating;
+          bias += movies[i].bias_rating;
+          entertainment += movies[i].entertainment_rating;
+          style += movies[i].style_rating;
+          plot += movies[i].plot_rating;
+          runtime += parseInt(movies[i].runtime.split(' ')[0]);
+
+          themes = themes.concat(movies[i].themes);
+          genres = genres.concat(movies[i].genres);
+
+          if(content_ratings[movies[i].rated]){
+            content_ratings[movies[i].rated]++;
           } else {
-            allWriters[writer] = 1;
+            content_ratings[movies[i].rated] = 1;
           }
+
+          reviews += movies[i].reviews.length;
+
+          movies[i].writer.forEach((writer) => {
+            if(allWriters[writer]){
+              allWriters[writer]++;
+            } else {
+              allWriters[writer] = 1;
+            }
+          });
+
+          view_dates.push(movies[i].date_added.date);
+
+        }
+        total = (total / movies.length).toFixed(2);
+        bias = (bias / movies.length).toFixed(2);
+        entertainment = (entertainment / movies.length).toFixed(2);
+        style = (style / movies.length).toFixed(2);
+        plot = (plot / movies.length).toFixed(2);
+        runtime = (runtime / movies.length).toFixed(2);
+        let hours = Math.floor(runtime / 60);
+        let minutes = Math.floor(runtime % 60);
+
+        let content = [];
+        Object.keys(content_ratings).forEach((key) => {
+          content.push([key, content_ratings[key]]);
         });
 
-        view_dates.push(movies[i].date_added.date);
-
-      }
-      total = (total / movies.length).toFixed(2);
-      bias = (bias / movies.length).toFixed(2);
-      entertainment = (entertainment / movies.length).toFixed(2);
-      style = (style / movies.length).toFixed(2);
-      plot = (plot / movies.length).toFixed(2);
-      runtime = (runtime / movies.length).toFixed(2);
-      let hours = Math.floor(runtime / 60);
-      let minutes = Math.floor(runtime % 60);
-
-      let content = [];
-      Object.keys(content_ratings).forEach((key) => {
-        content.push([key, content_ratings[key]]);
-      });
 
 
+      %>
 
-    %>
-
-    <!-- ====== MAIN ====== -->
-    <div class="container" id = 'main'>
-      <h2> <%= title %> </h2>
-      <br>
-      <div class="row">
-        <div class="col-lg-6 col-md-6">
-          <h3><span class = 'bold'>Average Rating :</span> <%= total %> </h3>
-          <div id="rating_chart" class = 'float_center graph_div'></div>
-        </div>
-        <div class="col-lg-6 col-md-6">
-          <h3><span class = 'bold'>Most Common Themes</h3>
-          <div id="themes_chart" class = 'float_center graph_div'></div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-lg-6 col-md-6">
-          <h3 class = 'bold'>Top Writers</h3>
-          <div class="stat_box float_center">
-            <% Object.keys(allWriters).forEach((key) => { %>
-              <p><span class = 'primary '><%= key %> : </span> <%= allWriters[key] %> </p>
-            <% }) %>
-          </div>
-        </div>
-        <div class="col-lg-6 col-md-6">
-          <h3 class = 'bold'>Info</h3>
-          <div class="stat_box float_center">
-            <p><span class = 'primary'>Movies Seen : </span> <%=movies.length %></p>
-            <p><span class = 'primary'>Gender : </span> <%=movies[0].director_gender %></p>
-            <p><span class = 'primary'>Average Runtime : </span> <%= hours %> hr <%= minutes%> min</p>
-            <p><span class = 'primary'>Reviews : </span> <%= reviews %></p>
-          </div>
-        </div>
-      </div> <br>
-
-      <div class="row">
-        <div class="col-lg-6 col-md-6">
-          <h3><span class = 'bold'>Most Common Genres</span></h3>
-          <div id="genre_chart" class = 'float_center graph_div'></div>
-        </div>
-        <div class="col-lg-6 col-md-6">
-          <h3><span class = 'bold'>Content Ratings</span></h3>
-          <div id="content_chart" class = 'float_center graph_div'></div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-lg-12 col-md-12">
-          <h3 class = 'bold reduce_bottom'>Viewing Timeline</h3>
-          <div id = 'view_graph' class = 'float_center graph_div'></div>
-        </div>
-      </div>
-      <br>
-      <div class="row">
-        <div class="col-lg-12 col-md-12">
-          <h3 class = 'bold reduce_bottom'>Release Timeline</h3>
-          <div id = 'movie_graph' class = 'float_center graph_div'></div>
-        </div>
-      </div>
-      <br><br>
-      <div class="top_seperator">
-      </div>
-      <br><br>
-      <h2>Movies</h2>
-      <br>
-      <div class="row align_center">
+      <!-- ====== MAIN ====== -->
+      <div class="container" id = 'main'>
+        <h2> <%= title %> </h2>
         <br>
-        <% movies.forEach( (movie) => {%>
-          <div class="col-lg-3 col-md-3">
-            <a href = <%= '/movies/' + movie._id %>><img src=<%= movie.poster %> width="150" alt=<%= movie.title %> class = 'poster'/></a>
-            <p class = 'rating_overview'><%= movie.total_rating %> / 20</p>
+        <div class="row">
+          <div class="col-lg-6 col-md-6">
+            <h3><span class = 'bold'>Average Rating :</span> <%= total %> </h3>
+            <div id="rating_chart" class = 'float_center graph_div'></div>
           </div>
-        <%}) %>
+          <div class="col-lg-6 col-md-6">
+            <h3><span class = 'bold'>Most Common Themes</h3>
+            <div id="themes_chart" class = 'float_center graph_div'></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-6 col-md-6">
+            <h3 class = 'bold'>Top Writers</h3>
+            <div class="stat_box float_center">
+              <% Object.keys(allWriters).forEach((key) => { %>
+                <p><span class = 'primary '><%= key %> : </span> <%= allWriters[key] %> </p>
+              <% }) %>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6">
+            <h3 class = 'bold'>Info</h3>
+            <div class="stat_box float_center">
+              <p><span class = 'primary'>Movies Seen : </span> <%=movies.length %></p>
+              <p><span class = 'primary'>Gender : </span> <%=movies[0].director_gender %></p>
+              <p><span class = 'primary'>Average Runtime : </span> <%= hours %> hr <%= minutes%> min</p>
+              <p><span class = 'primary'>Reviews : </span> <%= reviews %></p>
+            </div>
+          </div>
+        </div> <br>
+
+        <div class="row">
+          <div class="col-lg-6 col-md-6">
+            <h3><span class = 'bold'>Most Common Genres</span></h3>
+            <div id="genre_chart" class = 'float_center graph_div'></div>
+          </div>
+          <div class="col-lg-6 col-md-6">
+            <h3><span class = 'bold'>Content Ratings</span></h3>
+            <div id="content_chart" class = 'float_center graph_div'></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <h3 class = 'bold reduce_bottom'>Viewing Timeline</h3>
+            <div id = 'view_graph' class = 'float_center graph_div'></div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <h3 class = 'bold reduce_bottom'>Release Timeline</h3>
+            <div id = 'movie_graph' class = 'float_center graph_div'></div>
+          </div>
+        </div>
+        <br><br>
+        <div class="top_seperator">
+        </div>
+        <br><br>
+        <h2>Movies</h2>
+        <br>
+        <div class="row align_center">
+          <br>
+          <% movies.forEach( (movie) => {%>
+            <div class="col-lg-3 col-md-3">
+              <a href = <%= '/movies/' + movie._id %>><img src=<%= movie.poster %> width="150" alt=<%= movie.title %> class = 'poster'/></a>
+              <p class = 'rating_overview'><%= movie.total_rating %> / 20</p>
+            </div>
+          <%}) %>
+        </div>
+      </div>
+
+      <!-- ===== Movie Modal ===== -->
+      <div class="modal fade" id="movieModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title primary">Add a new movie</h5>
+            </div>
+            <div class="modal-body">
+              <p id = 'searchError' class = 'warning'></p>
+              <div class="row" id = 'search_page_1'>
+                <div class="col-lg-3">
+                  <span class = 'primary'> Search : </span>
+                </div>
+                <div class="col-lg-9">
+                  <input type="text" class = 'login_input' name = 'searchBar' id = 'searchBar'/>
+                </div>
+              </div>
+              <div class="container" id = 'search_page_2'>
+              </div>
+              <div class="container" id = 'search_page_3'>
+                <div class="col-lg-12 col-md-12" id="search_poster_wrapper">
+                </div> <br>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Entertainment Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_input'> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Plot Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_input'> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Style Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_input'> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Bias :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_input'> / 5
+                  </div>
+                </div> <br>
+                <div class="row">
+                  <div class="col-lg-2 col-md-2">
+
+                  </div>
+                  <div id='themeWrapper' class = 'col-lg-10 col-md-10'>
+
+                  </div>
+                  <div class="col-lg-2 col-md-2">
+
+                  </div>
+                  <div class="col-lg-12 col-md-12">
+                    <button type="button" class="btn btn-secondary" onclick = 'addTheme()'>+ Add Theme</button>
+                  </div>
+                </div> <br>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary padded_sm'>Date Viewed : </p>
+                  </div>
+                  <div class="col-lg-6 col-md-6">
+                    <input type="date" id='viewingDate' value="<%=getFormattedDate()%>" class = 'login_input'/>
+                  </div>
+                </div>
+              </div>
+              </div>
+            <div class="modal-footer" id = 'footer_main'>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick = 'refreshMovieModal()'>Close</button>
+              <button type="button" class="primary_btn btn" onclick= "search()" id = 'searchButton'>Search</button>
+            </div>
+            <div class="modal-footer" id = 'submit_footer'>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="primary_btn btn" id = 'submitButton' data-dismiss = 'modal'>Submit</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <!-- ===== Add Movie ===== -->
-    <div class="modal fade" id="movieModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title primary">Add a new movie</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="row" id = 'search_page_1'>
-              <div class="col-lg-3">
-                <span class = 'primary'> Search : </span>
-              </div>
-              <div class="col-lg-9">
-                <input type="text" class = 'login_input' name = 'searchBar' id = 'searchBar'/>
-              </div>
-            </div>
-            <div class="container" id = 'search_page_2'>
-            </div>
-            <div class="container" id = 'search_page_3'>
-              <div class="col-lg-12 col-md-12" id="search_poster_wrapper">
-              </div> <br>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary'>Entertainment Rating :</p>
-                </div>
-                <div class="col-lg-6 col-md-6 align_left">
-                  <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_input'> / 5
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary'>Plot Rating :</p>
-                </div>
-                <div class="col-lg-6 col-md-6 align_left">
-                  <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_input'> / 5
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary'>Style Rating :</p>
-                </div>
-                <div class="col-lg-6 col-md-6 align_left">
-                  <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_input'> / 5
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary'>Bias :</p>
-                </div>
-                <div class="col-lg-6 col-md-6 align_left">
-                  <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_input'> / 5
-                </div>
-              </div> <br>
-              <div class="row">
-                <div id='themeWrapper' class = 'col-lg-12 col-md-12'>
-
-                </div>
-                <div class="col-lg-12 col-md-12">
-                  <button type="button" class="btn btn-secondary" onclick = 'addTheme()'>+ Add Theme</button>
-                </div>
-              </div> <br>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary padded_sm'>Date Viewed : </p>
-                </div>
-                <div class="col-lg-6 col-md-6">
-                  <input type="date" id='viewingDate' value="<%=getFormattedDate()%>" class = 'login_input'/>
-                </div>
-              </div>
-            </div>
-            </div>
-          <div class="modal-footer" id = 'footer_main'>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="primary_btn btn" onclick= "search()" >Search</button>
-          </div>
-          <div class="modal-footer" id = 'submit_footer'>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="primary_btn btn" id = 'submitButton'>Submit</button>
-          </div>
-        </div>
-      </div>
+    <div id="loadingScreen">
+      <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
     </div>
 
     <!-- Footer -->
@@ -296,7 +305,11 @@
     </div>
     <!-- Footer -->
 
-
+    <script type="text/javascript" src = '/js/loading.js'></script>
+    <script type="text/javascript" src = '/js/main.js'></script>
+    <script type="text/javascript">
+      loadingScreen('test');
+    </script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type = 'text/javascript' src = '/js/chart.js'></script>
     <script type="text/javascript" src = '/js/date.js'></script>
@@ -382,7 +395,6 @@
       });
 
     </script>
-    <script type="text/javascript" src = '/js/main.js'></script>
     <script type="text/javascript" src = '/js/jquery.min.js'></script>
     <script type="text/javascript" src = '/js/bootstrap.min.js'></script>
   </body>

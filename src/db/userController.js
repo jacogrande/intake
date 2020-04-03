@@ -41,9 +41,22 @@ const removeMovie = (userId, movieId) => {
   });
 };
 
+const findByEmail = (email) => User.findOne({ email }, (err, user) => {
+  if (err) return { err };
+  return { _id: user._id };
+});
+
+const resetPassword = (_id, password) => User.findOne({ _id }, (err, user) => {
+  if (err) return { err };
+  user.password = password;
+  return user.save((err) => err);
+});
+
 module.exports = {
   addMovie,
   isViewed,
   getMovies,
   removeMovie,
+  findByEmail,
+  resetPassword,
 };

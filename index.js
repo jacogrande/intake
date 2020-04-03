@@ -12,7 +12,12 @@ const MongoStore = require('connect-mongo')(session);
 
 const User = require('./src/schemas/user.js');
 
-const mongoUri = process.env.MONGO_URI;
+let mongoUri = '';
+if (process.env.NODE_ENV === 'production') {
+  mongoUri = process.env.MONGO_URI;
+} else if (process.env.NODE_ENV === 'dev') {
+  mongoUri = 'mongodb://localhost:27017/intake';
+}
 
 // mongoose implementation
 mongoose.connect(mongoUri, { useNewUrlParser: true });
@@ -31,10 +36,12 @@ const userRouter = require('./src/routers/userRouter.js');
 
 
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.NODE_ENV === 'production' ? process.env.SESSION_SECRET : 'beese churger',
   resave: false,
-  saveUninitialized: true,
-  store: new MongoStore({ mongooseConnection: db }),
+  saveUninitialized: false,
+  store: new MongoStore({
+    mongooseConnection: db,
+  }),
 }));
 
 app.use(helmet());

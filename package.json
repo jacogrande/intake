@@ -4,7 +4,8 @@
   "description": "A platform to track media consumption",
   "main": "index.js",
   "scripts": {
-    "start": "DEBUG=index nodemon index.js"
+    "start": "env NODE_ENV=production DEBUG=index nodemon index.js",
+    "start_dev": "env NODE_ENV=dev DEBUG=index nodemon index.js"
   },
   "author": "Jackson Prowell",
   "license": "ISC",
@@ -21,9 +22,11 @@
     "express-session": "1.17.0",
     "helmet": "3.21.3",
     "jquery": "3.4.1",
+    "jsonwebtoken": "8.5.1",
     "mongoose": "5.9.5",
     "mongoose-unique-validator": "2.0.3",
     "morgan": "1.9.1",
+    "nodemailer": "6.4.6",
     "nodemon": "2.0.2",
     "passport": "0.4.1",
     "passport-local": "1.0.0",
@@ -40,10 +43,6 @@
       "node_modules/**/node_modules"
     ],
     "delay": 2500
-  },
-  "env": {
-    "NODE_ENV": "production",
-    "PORT": 3000
   },
   "engines": {
     "node": "10.x"

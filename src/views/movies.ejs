@@ -11,301 +11,310 @@
   </head>
   <body>
 
-    <!-- ====== NAV ====== -->
-    <nav class="navbar navbar-expand-lg">
-      <a class="navbar-brand" id = 'logo' href="/">INTAKE</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <span class = 'col-lg-7 col-md-7'></span>
-      <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-              <a class="nav-link" href="/">ABOUT</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="/movies">MOVIES</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/stats">STATS</a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link" href="/profile">PROFILE</a>
-          </li>
-          <li class="nav_button">
-            <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>
-              <span class="nav-link">+</span>
-              <div class="add_hover clicker_cursor">
-                Add a movie
-              </div>
-            </a>
-          </li>
+    <div id = 'page'>
+      <!-- ====== NAV ====== -->
+      <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" id = 'logo' href="/">INTAKE</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <span class = 'col-lg-7 col-md-7'></span>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/">ABOUT</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/movies">MOVIES</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/stats">STATS</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">PROFILE</a>
+            </li>
+            <li class="nav_button">
+              <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>
+                <span class="nav-link">+</span>
+                <div class="add_hover clicker_cursor">
+                  Add a movie
+                </div>
+              </a>
+            </li>
 
-        </ul>
-      </div>
-    </nav>
-
-    <%
-      function getFormattedDate(date) {
-        const todayTime = new Date(parseInt(date));
-        const month = todayTime.getMonth() + 1;
-        const day = todayTime.getDate();
-        const year = todayTime.getFullYear();
-        return `${month}-${day}-${year}`;
-      }
-    %>
-
-    <!-- ====== MAIN ====== -->
-    <div class="container" id = 'main'>
-      <!-- for movie overview (no id specification) -->
-      <% if(locals.movieList) { %>
-        <h2><%= page_title %></h2>
-        <br>
-        <div class="row">
-          <% movieList.forEach( (movie) => {%>
-            <div class="col-lg-3 col-md-3">
-              <a href = <%= '/movies/' + movie._id %>><img src=<%= movie.poster %> width="150" alt=<%= movie.title %> class = 'poster'/></a>
-              <p class = 'rating_overview'><%= movie.total_rating %> / 20</p>
-            </div>
-          <%}) %>
+          </ul>
         </div>
-      <!-- for selected movie -->
-      <% } else { %>
-        <div class="row">
-          <div class="col-lg-3">
-            <img src=<%= selection.poster %> width="250" alt=<%= selection.title %> class = 'poster'/>
+      </nav>
+
+      <%
+        function getFormattedDate(date) {
+          const todayTime = new Date(parseInt(date));
+          const month = todayTime.getMonth() + 1;
+          const day = todayTime.getDate();
+          const year = todayTime.getFullYear();
+          return `${month}-${day}-${year}`;
+        }
+      %>
+
+      <!-- ====== MAIN ====== -->
+      <div class="container fade_in" id = 'main'>
+        <!-- for movie overview (no id specification) -->
+        <% if(locals.movieList) { %>
+          <h2><%= page_title %></h2>
+          <br>
+          <div class="row">
+            <% movieList.forEach( (movie) => {%>
+              <div class="col-lg-3 col-md-3">
+                <a href = <%= '/movies/' + movie._id %>><img src=<%= movie.poster %> width="150" alt=<%= movie.title %> class = 'poster'/></a>
+                <p class = 'rating_overview'><%= movie.total_rating %> / 20</p>
+              </div>
+            <%}) %>
           </div>
-          <div class="col-lg-4 align_left">
-            <h2 class = 'bold'><%= selection.title %></h2>
-            <p><span class = 'primary'>Director : </span> <a href = <%= "/stats/director/" + encodeURI(selection.director[0]) %>><%= selection.director[0] %> </a>
-              <!-- add additonal directors -->
-              <% for(let i = 1; i < selection.director.length; i++) { %>
-                <a href = <%= "/stats/director/" + encodeURI(selection.director[i]) %>, <%=selection.director[i] %></a>
-              <% } %>
-            </p>
-            <p><span class = 'primary'>Writer : </span> <a href = <%= "/stats/writer/" + encodeURI(selection.writer[0]) %>><%= selection.writer[0] %> </a>
-              <!-- add additonal writers -->
-              <% for(let i = 1; i < selection.writer.length; i++) { %>
-                <a href = <%= "/stats/writer/" + encodeURI(selection.writer[i]) %>>, <%=selection.writer[i] %></a>
-              <% } %>
-            </p>
-            <p><span class = 'primary'>Genres : </span>
-              <a href=<%="/stats/genres/" + encodeURI(selection.genres[0])%>><%= selection.genres[0] %></a>
-              <% for(let i = 1; i < selection.genres.length; i++) { %>
-                <a href=<%="/stats/genres/" + encodeURI(selection.genres[i])%>>, <%= selection.genres[i] %></a>
-              <% } %>
-            </p>
-            <p><span class = 'primary'>Year Released : </span> <a href = <%='/stats/year/' + selection.year %>> <%= selection.year %></a></p>
-            <p><span class = 'primary'>Rated : </span> <a href = <%='/stats/rated/' + selection.rated %>> <%= selection.rated %></a></p>
-            <p><span class = 'primary'>Runtime : </span> <a href = <%= '/stats/runtime/' + encodeURI(selection.runtime) %>> <%= selection.runtime %></p>
+        <!-- for selected movie -->
+        <% } else { %>
+          <div class="row">
+            <div class="col-lg-3">
+              <p class = 'clicker_cursor float_left'><a href="/movies" class = 'primary'>Movies / </p>
+            </div>
           </div>
-          <div class="col-lg-4 align_left h2_break">
-            <p class = 'bump_down'></p>
-            <p><span class = 'primary'>Entertainment Rating : </span> <a href = <%='/stats/entertainment_rating/' + selection.entertainment_rating %>>
-              <svg height="10" width="120">
-              <% for(let i = 1; i <= 5; i++){ %>
-                <% if(i <= selection.entertainment_rating){ %>
-                  <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
-                <% } else { %>
-                  <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
+          <div class="row">
+            <div class="col-lg-3">
+              <img src=<%= selection.poster %> width="250" alt=<%= selection.title %> class = 'poster'/>
+            </div>
+            <div class="col-lg-4 align_left">
+              <h2 class = 'bold'><%= selection.title %></h2>
+              <p><span class = 'primary'>Director : </span> <a href = <%= "/stats/director/" + encodeURI(selection.director[0]) %>><%= selection.director[0] %> </a>
+                <!-- add additonal directors -->
+                <% for(let i = 1; i < selection.director.length; i++) { %>
+                  <a href = <%= "/stats/director/" + encodeURI(selection.director[i]) %>, <%=selection.director[i] %></a>
                 <% } %>
-              <% } %>
-            </svg>
-            </a></p>
-            <p><span class = 'primary '>Plot Rating : </span> <a href = <%='/stats/plot_rating/' + selection.plot_rating %>>
-              <svg height="10" width="120">
-              <% for(let i = 1; i <= 5; i++){ %>
-                <% if(i <= selection.plot_rating){ %>
-                  <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
-                <% } else { %>
-                  <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
+              </p>
+              <p><span class = 'primary'>Writer : </span> <a href = <%= "/stats/writer/" + encodeURI(selection.writer[0]) %>><%= selection.writer[0] %> </a>
+                <!-- add additonal writers -->
+                <% for(let i = 1; i < selection.writer.length; i++) { %>
+                  <a href = <%= "/stats/writer/" + encodeURI(selection.writer[i]) %>>, <%=selection.writer[i] %></a>
                 <% } %>
-              <% } %>
-            </svg>
-            </a></p>
-            <p><span class = 'primary '>Style Rating : </span> <a href = <%='/stats/style_rating/' + selection.style_rating %>>
-              <svg height="10" width="120">
+              </p>
+              <p><span class = 'primary'>Genres : </span>
+                <a href=<%="/stats/genres/" + encodeURI(selection.genres[0])%>><%= selection.genres[0] %></a>
+                <% for(let i = 1; i < selection.genres.length; i++) { %>
+                  <a href=<%="/stats/genres/" + encodeURI(selection.genres[i])%>>, <%= selection.genres[i] %></a>
+                <% } %>
+              </p>
+              <p><span class = 'primary'>Year Released : </span> <a href = <%='/stats/year/' + selection.year %>> <%= selection.year %></a></p>
+              <p><span class = 'primary'>Rated : </span> <a href = <%='/stats/rated/' + selection.rated %>> <%= selection.rated %></a></p>
+              <p><span class = 'primary'>Runtime : </span> <a href = <%= '/stats/runtime/' + encodeURI(selection.runtime) %>> <%= selection.runtime %></p>
+            </div>
+            <div class="col-lg-4 align_left h2_break">
+              <p class = 'bump_down'></p>
+              <p><span class = 'primary'>Entertainment Rating : </span> <a href = <%='/stats/entertainment_rating/' + selection.entertainment_rating %>>
+                <svg height="10" width="120">
                 <% for(let i = 1; i <= 5; i++){ %>
-                  <% if(i <= selection.style_rating){ %>
+                  <% if(i <= selection.entertainment_rating){ %>
                     <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
                   <% } else { %>
                     <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
                   <% } %>
                 <% } %>
               </svg>
-            </a></p>
-            <p><span class = 'primary '>Bias : </span> <a href = <%='/stats/bias_rating/' + selection.bias_rating %>>
-              <svg height="10" width="120">
-              <% for(let i = 1; i <= 5; i++){ %>
-                <% if(i <= selection.bias_rating){ %>
-                  <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
-                <% } else { %>
-                  <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
+              </a></p>
+              <p><span class = 'primary '>Plot Rating : </span> <a href = <%='/stats/plot_rating/' + selection.plot_rating %>>
+                <svg height="10" width="120">
+                <% for(let i = 1; i <= 5; i++){ %>
+                  <% if(i <= selection.plot_rating){ %>
+                    <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
+                  <% } else { %>
+                    <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
+                  <% } %>
                 <% } %>
-              <% } %>
-            </svg>
-            </a></p>
-            <p><span class = 'primary'>Total Rating : </span> <a href = "/stats/total_rating/<%=selection.total_rating%>"><%=selection.total_rating %> / 20 </a>
-              <% if(selection.total_rating > 18) { %>
-                <span class="revealer">
-                  <span class = 'flame_text'>19 Club</span>
-                  <img src="/src/images/flame.png" width = '25px' height = '25px' class = 'flame' alt="Flame" />
-                </span>
-              <% } %>
-            </p>
-            <p><span class = 'primary'>Themes : </span>  <a href = <%= '/stats/themes/' + selection.themes[0] %>> <%=selection.themes[0] %> </a>
-              <% for(let i = 1; i < selection.themes.length; i++) { %>
-                <a href = <%= '/stats/themes/' + selection.themes[i] %>>, <%=selection.themes[i] %> </a>
-              <% } %>
-            </p>
-            <p><span class = 'primary'>Date Viewed : </span> <%=getFormattedDate(selection.date_added.date)%> </p>
-          </div>
-          <div class="col-lg-1 col-md-1">
-            <a href = "#movie_options_box" data-toggle="collapse">
-              <svg height="10" width="120" class = 'hover_opacity clicker_cursor'>
-                <circle cx="17" cy="5" r="3" fill="#D5D5D5" />
-                <circle cx="32" cy="5" r="3" fill="#D5D5D5" />
-                <circle cx=47 cy="5" r="3" fill="#D5D5D5" />
               </svg>
-            </a>
-            <div class="movie_options collapse" id = 'movie_options_box'>
-              <p class = 'clicker_cursor bold'><a data-toggle='modal' data-target="#deleteModal">Delete</a></p>
+              </a></p>
+              <p><span class = 'primary '>Style Rating : </span> <a href = <%='/stats/style_rating/' + selection.style_rating %>>
+                <svg height="10" width="120">
+                  <% for(let i = 1; i <= 5; i++){ %>
+                    <% if(i <= selection.style_rating){ %>
+                      <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
+                    <% } else { %>
+                      <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
+                    <% } %>
+                  <% } %>
+                </svg>
+              </a></p>
+              <p><span class = 'primary '>Bias : </span> <a href = <%='/stats/bias_rating/' + selection.bias_rating %>>
+                <svg height="10" width="120">
+                <% for(let i = 1; i <= 5; i++){ %>
+                  <% if(i <= selection.bias_rating){ %>
+                    <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
+                  <% } else { %>
+                    <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
+                  <% } %>
+                <% } %>
+              </svg>
+              </a></p>
+              <p><span class = 'primary'>Total Rating : </span> <a href = "/stats/total_rating/<%=selection.total_rating%>"><%=selection.total_rating %> / 20 </a>
+                <% if(selection.total_rating > 18) { %>
+                  <span class="revealer">
+                    <span class = 'flame_text'>19 Club</span>
+                    <img src="/src/images/flame.png" width = '25px' height = '25px' class = 'flame' alt="Flame" />
+                  </span>
+                <% } %>
+              </p>
+              <p><span class = 'primary'>Themes : </span>  <a href = <%= '/stats/themes/' + selection.themes[0] %>> <%=selection.themes[0] %> </a>
+                <% for(let i = 1; i < selection.themes.length; i++) { %>
+                  <a href = <%= '/stats/themes/' + selection.themes[i] %>>, <%=selection.themes[i] %> </a>
+                <% } %>
+              </p>
+              <p><span class = 'primary'>Date Viewed : </span> <%=getFormattedDate(selection.date_added.date)%> </p>
+            </div>
+            <div class="col-lg-1 col-md-1 match_top">
+              <a href = "#movie_options_box" data-toggle="collapse">
+                <svg height="10" width="120" class = 'hover_opacity clicker_cursor'>
+                  <circle cx="17" cy="5" r="3" fill="#D5D5D5" />
+                  <circle cx="32" cy="5" r="3" fill="#D5D5D5" />
+                  <circle cx=47 cy="5" r="3" fill="#D5D5D5" />
+                </svg>
+              </a>
+              <div class="movie_options collapse" id = 'movie_options_box'>
+                <p class = 'clicker_cursor bold'><a data-toggle='modal' data-target="#deleteModal">Delete</a></p>
+              </div>
+            </div>
+          </div>
+          <div class="row top_seperator align_left">
+            <div class="col-lg-6 col-md-6 right_border">
+              <p class = 'padded_sm'><span class = 'primary'>Premise : </span> <%= selection.plot %> </p>
+            </div>
+            <div class="col-lg-6 col-md-6" >
+              <div id = 'reviewSection'>
+                <p class = 'padded_sm bold'>Reviews</p>
+                <p>Coming soon ... </p>
+              </div>
+            </div>
+          </div>
+        <% } %>
+
+      </div>
+
+
+      <!-- ===== Review Modal ===== -->
+      <!-- Modal -->
+      <% if(locals.selection){ %>
+
+      <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title primary">Are you sure?</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <br>
+              <p class = 'warning'>This action is permanent</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "deleteMovie()" >Delete</button>
             </div>
           </div>
         </div>
-        <div class="row top_seperator align_left">
-          <div class="col-lg-6 col-md-6 right_border">
-            <p class = 'padded_sm'><span class = 'primary'>Premise : </span> <%= selection.plot %> </p>
-          </div>
-          <div class="col-lg-6 col-md-6" >
-            <div id = 'reviewSection'>
-              <p class = 'padded_sm bold'>Reviews</p>
-              <p>Coming soon ... </p>
-            </div>
-          </div>
-        </div>
+      </div>
+
       <% } %>
 
-    </div>
+      <!-- ===== Movie Modal ===== -->
+      <div class="modal fade" id="movieModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title primary">Add a new movie</h5>
+            </div>
+            <div class="modal-body">
+              <p id = 'searchError' class = 'warning'></p>
+              <div class="row" id = 'search_page_1'>
+                <div class="col-lg-3">
+                  <span class = 'primary'> Search : </span>
+                </div>
+                <div class="col-lg-9">
+                  <input type="text" class = 'login_input' name = 'searchBar' id = 'searchBar'/>
+                </div>
+              </div>
+              <div class="container" id = 'search_page_2'>
+              </div>
+              <div class="container" id = 'search_page_3'>
+                <div class="col-lg-12 col-md-12" id="search_poster_wrapper">
+                </div> <br>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Entertainment Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_input'> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Plot Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_input'> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Style Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_input'> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Bias :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_input'> / 5
+                  </div>
+                </div> <br>
+                <div class="row">
+                  <div class="col-lg-2 col-md-2">
 
+                  </div>
+                  <div id='themeWrapper' class = 'col-lg-10 col-md-10'>
 
-    <!-- ===== Review Modal ===== -->
-    <!-- Modal -->
-    <% if(locals.selection){ %>
+                  </div>
+                  <div class="col-lg-2 col-md-2">
 
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title primary">Are you sure?</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <br>
-            <p class = 'warning'>This action is permanent</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "deleteMovie()" >Delete</button>
+                  </div>
+                  <div class="col-lg-12 col-md-12">
+                    <button type="button" class="btn btn-secondary" onclick = 'addTheme()'>+ Add Theme</button>
+                  </div>
+                </div> <br>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary padded_sm'>Date Viewed : </p>
+                  </div>
+                  <div class="col-lg-6 col-md-6">
+                    <input type="date" id='viewingDate' value="<%=getFormattedDate()%>" class = 'login_input'/>
+                  </div>
+                </div>
+              </div>
+              </div>
+            <div class="modal-footer" id = 'footer_main'>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick = 'refreshMovieModal()'>Close</button>
+              <button type="button" class="primary_btn btn" onclick= "search()" id = 'searchButton'>Search</button>
+            </div>
+            <div class="modal-footer" id = 'submit_footer'>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="primary_btn btn" id = 'submitButton' data-dismiss = 'modal'>Submit</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <% } %>
-
-    <!-- ===== Add Movie ===== -->
-    <div class="modal fade" id="movieModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title primary">Add a new movie</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="row" id = 'search_page_1'>
-              <div class="col-lg-3">
-                <span class = 'primary'> Search : </span>
-              </div>
-              <div class="col-lg-9">
-                <input type="text" class = 'login_input' name = 'searchBar' id = 'searchBar'/>
-              </div>
-            </div>
-            <div class="container" id = 'search_page_2'>
-            </div>
-            <div class="container" id = 'search_page_3'>
-              <div class="col-lg-12 col-md-12" id="search_poster_wrapper">
-              </div> <br>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary'>Entertainment Rating :</p>
-                </div>
-                <div class="col-lg-6 col-md-6 align_left">
-                  <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_input'> / 5
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary'>Plot Rating :</p>
-                </div>
-                <div class="col-lg-6 col-md-6 align_left">
-                  <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_input'> / 5
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary'>Style Rating :</p>
-                </div>
-                <div class="col-lg-6 col-md-6 align_left">
-                  <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_input'> / 5
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary'>Bias :</p>
-                </div>
-                <div class="col-lg-6 col-md-6 align_left">
-                  <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_input'> / 5
-                </div>
-              </div> <br>
-              <div class="row">
-                <div class="col-lg-2 col-md-2">
-
-                </div>
-                <div id='themeWrapper' class = 'col-lg-10 col-md-10'>
-
-                </div>
-                <div class="col-lg-2 col-md-2">
-
-                </div>
-                <div class="col-lg-12 col-md-12">
-                  <button type="button" class="btn btn-secondary" onclick = 'addTheme()'>+ Add Theme</button>
-                </div>
-              </div> <br>
-              <div class="row">
-                <div class="col-lg-6 col-md-6 align_right">
-                  <p class = 'primary padded_sm'>Date Viewed : </p>
-                </div>
-                <div class="col-lg-6 col-md-6">
-                  <input type="date" id='viewingDate' value="<%=getFormattedDate()%>" class = 'login_input'/>
-                </div>
-              </div>
-            </div>
-            </div>
-          <div class="modal-footer" id = 'footer_main'>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="primary_btn btn" onclick= "search()" >Search</button>
-          </div>
-          <div class="modal-footer" id = 'submit_footer'>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="primary_btn btn" id = 'submitButton'>Submit</button>
-          </div>
-        </div>
-      </div>
+    <div id="loadingScreen">
+      <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
     </div>
 
 
@@ -315,6 +324,7 @@
     </div>
     <!-- Footer -->
 
+    <script src = '/js/loading.js'></script>
     <script type="text/javascript" src = '/js/main.js'></script>
     <script type="text/javascript" src = '/js/jquery.min.js'></script>
     <script type="text/javascript" src = '/js/bootstrap.min.js'></script>

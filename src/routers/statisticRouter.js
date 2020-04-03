@@ -30,7 +30,6 @@ statisticRouter.route('/:property')
         movieArray.push([key, data[key]]);
       }
     });
-
     res.render('stats', { property, title: `${property}`, movieArray });
   });
 
@@ -39,7 +38,11 @@ statisticRouter.route('/:property/:value')
     const { value, property } = req.params;
     const movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
     const results = db.findByValue(movieList, property, value, true); // call movie method that returns an array of all movies with the specified property value
-    res.render('individualStats.ejs', { movies: results, title: `${property} : ${value}` });
+    if (results.length > 0) {
+      res.render('individualStats.ejs', { movies: results, title: `${property} : ${value}` });
+    } else {
+      res.redirect('/');
+    }
   });
 
 module.exports = statisticRouter;

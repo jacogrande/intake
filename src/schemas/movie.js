@@ -14,11 +14,11 @@ const MovieSchema = new mongoose.Schema({
   writer: [String],
   plot: String,
   ratings: [{
-    entertainment_rating: Number,
-    plot_rating: Number,
-    style_rating: Number,
-    bias_rating: Number,
-    total_rating: Number,
+    entertainment_rating: { type: Number, default: 0 },
+    plot_rating: { type: Number, default: 0 },
+    style_rating: { type: Number, default: 0 },
+    bias_rating: { type: Number, default: 0 },
+    total_rating: { type: Number, default: 0 },
     user_id: String,
   }],
   themes: [{
