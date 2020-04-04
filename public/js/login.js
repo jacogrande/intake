@@ -63,7 +63,7 @@ const register = async () => { // function for registering users
     return false;
   }
   if (serverResponse.success) { // if the registration succeeds
-    window.location.pathname = '/moviese';
+    window.location.pathname = '/movies';
   } else { // otherwise
     document.getElementById('invalid_modal_label').innerHTML = 'That username is not available';
     document.getElementById('invalid_modal_label').style.opacity = 1; // notify the user
