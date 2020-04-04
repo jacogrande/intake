@@ -60,15 +60,26 @@
       <div class="container fade_in" id = 'main'>
         <!-- for movie overview (no id specification) -->
         <% if(locals.movieList) { %>
-          <h2><%= page_title %></h2>
-          <br>
-          <div class="row">
-            <% movieList.forEach( (movie) => {%>
-              <div class="col-lg-3 col-md-3">
-                <a href = <%= '/movies/' + movie._id %>><img src=<%= movie.poster %> width="150" alt=<%= movie.title %> class = 'poster'/></a>
-                <p class = 'rating_overview'><%= movie.total_rating %> / 20</p>
+          <% if(movieList.length === 0){ %>
+            <div class="row">
+              <div class="col-lg-12 col-md-12 addMovieJumbo">
+                <div class="addMovieButtonBig" onclick = ''>
+                  <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>+</a>
+                </div>
+                <br>
+                <h1>Add a new movie</h1>
               </div>
-            <%}) %>
+          <% } else { %>
+            <h2><%= page_title %></h2>
+            <br>
+            <div class="row">
+              <% movieList.forEach( (movie) => {%>
+                <div class="col-lg-3 col-md-3">
+                  <a href = <%= '/movies/' + movie._id %>><img src=<%= movie.poster %> width="150" alt=<%= movie.title %> class = 'poster'/></a>
+                  <p class = 'rating_overview'><%= movie.total_rating %> / 20</p>
+                </div>
+              <%}) %>
+            <% } %>
           </div>
         <!-- for selected movie -->
         <% } else { %>

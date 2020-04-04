@@ -17,7 +17,7 @@ const userRouter = express.Router();
 userRouter.route('/register') // registration route
   .get((req, res) => { // if the user is registered, send them to the profile page, otherwise, set them up with a registration page
     if (req.user != null) {
-      res.redirect('/profile');
+      res.redirect('/movies');
     } else {
       res.render('login');
     }
@@ -55,7 +55,7 @@ userRouter.route('/register') // registration route
 userRouter.route('/login')
   .get((req, res) => {
     if (req.user != null) {
-      res.redirect('/profile');
+      res.redirect('/movies');
     } else {
       res.render('login');
     }

@@ -83,6 +83,27 @@ h2 {
   font-size: 2em;
 }
 
+.addMovieButtonBig {
+  width: 400px;
+  height:400px;
+  margin:auto;
+  border-radius: 100%;
+  border: 2px solid #8EC3AF;
+  font-size: 15em;
+  font-weight: 100;
+  transition: all 0.5s;
+}
+
+.addMovieButtonBig:hover, .addMovieButtonBig:active {
+  background: #8EC3AF;
+  cursor: pointer;
+}
+
+h1 {
+  font-weight: 200;
+  font-size: 3em;
+}
+
 h3 {
   font-weight: 150;
   font-size: 1.5em;

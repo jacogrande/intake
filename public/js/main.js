@@ -205,6 +205,12 @@ const addListeners = () => {
       return e.srcElement.value = '5';
     }
   });
+  document.getElementById('searchBar').addEventListener('keyup', (e) => {
+    if (e.keyCode === 13) {
+      event.preventDefault();
+      document.getElementById('searchButton').click();
+    }
+  });
 };
 
 addListeners();

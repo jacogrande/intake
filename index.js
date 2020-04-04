@@ -1,5 +1,4 @@
 const express = require('express');
-const chalk = require('chalk');
 const debug = require('debug')('index');
 const morgan = require('morgan');
 const path = require('path');
@@ -23,9 +22,9 @@ if (process.env.NODE_ENV === 'production') {
 // mongoose implementation
 mongoose.connect(mongoUri, { useNewUrlParser: true });
 const db = mongoose.connection;
-db.on('error', () => debug(chalk.red('Connection error')));
+db.on('error', () => debug('Connection error'));
 db.once('open', () => {
-  debug(chalk.green('mongodb online'));
+  debug('mongodb online');
 });
 
 
@@ -79,4 +78,4 @@ app.get('/', (req, res) => {
 });
 
 
-app.listen(PORT, () => debug(`Socket to me on port ${chalk.green(PORT)}...`));
+app.listen(PORT, () => debug(`Socket to me on port ${PORT}...`));
