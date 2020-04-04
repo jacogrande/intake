@@ -73,8 +73,9 @@
                 <circle cx=47 cy="5" r="3" fill="#D5D5D5" />
               </svg>
             </a>
-            <div class="movie_options collapse col-lg-1 col-md-1 float_right" id = 'account_settings'>
-              <p class = 'clicker_cursor bold'><a  data-toggle="modal" data-target="#confirmationModal">Logout</a></p>
+            <div class="movie_options collapse col-lg-2 col-md-2 float_right" id = 'account_settings'>
+              <p class = 'clicker_cursor bold border_bottom'><a  data-toggle="modal" data-target="#confirmationModal">Logout</a></p>
+              <p class = 'clicker_cursor bold bump_up'><a  data-toggle="modal" data-target="#deleteModal">Delete Account</a></p>
             </div>
           </div>
         </div>
@@ -109,6 +110,29 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               <button type="button" class="primary_btn btn" onclick = 'logout()'>Logout</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="container">
+                <h3>Please enter your username:</h3>
+                <p id = 'username_mismatch' class = 'warning hidden'>The inputted username doesn't match out records.</p>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <input type="text" class = 'login_input' name = 'username_confirmation' id = 'username_confirmation'/>
+                  </div>
+                </div>
+              </div>
+              <br><br>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="primary_btn btn" onclick = 'deleteAccount("<%=username%>")'>Delete Account</button>
             </div>
           </div>
         </div>
@@ -211,6 +235,7 @@
 
     <script src = '/js/loading.js'></script>
     <script type="text/javascript" src = '/js/main.js'></script>
+    <script type="text/javascript" src = '/js/profile.js'></script>
     <script type="text/javascript" src = '/js/jquery.min.js'></script>
     <script type="text/javascript" src = '/js/bootstrap.min.js'></script>
 

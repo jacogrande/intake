@@ -3,12 +3,12 @@ const invalidateLogin = () => {
   document.getElementById('password_input').value = '';
 };
 
-function validateEmail(email) {
+const validateEmail = (email) => {
   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
     return true;
   }
   return false;
-}
+};
 
 const login = async () => {
   document.getElementById('invalid_label').style.opacity = 0;
@@ -55,8 +55,7 @@ const register = async () => { // function for registering users
     headers: {
       'Content-Type': 'application/json',
     },
-  }).then((response) => response.json());
-
+  }).then((response) => response.json);
   if (serverResponse.error) { // check for errors
     document.getElementById('invalid_modal_label').innerHTML = serverResponse.error.message;
     document.getElementById('invalid_modal_label').style.opacity = 1; // notify the user of the error
@@ -91,7 +90,7 @@ const submitNewPassword = () => {
   loadingScreen();
   const password = document.getElementById('new_password_input').value;
   const confirmation = document.getElementById('password_confirmation_input');
-
+  x;
   if (password != confirmation.value) {
     console.log('tough');
     document.getElementById('passwords_dont_match').style.visibility = 'visible';

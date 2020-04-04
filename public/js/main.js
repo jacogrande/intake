@@ -14,17 +14,6 @@ const focusModal = (id = 'review_textarea') => {
   setTimeout(() => document.getElementById(id).focus(), 500);
 };
 
-// function for submitting a review
-const submitReview = async (id) => {
-  const review = document.getElementById('review_textarea').value;
-  document.getElementById('review_textarea').value = '';
-  const response = await post(`/movies/reviews/${id}`, { review });
-  const reviewSection = document.getElementById('reviewSection');
-  const newReview = document.createElement('p');
-  newReview.innerHTML = `<span class = 'primary padded_sm'>I said : </span> ${review} (${new Date().toDateString()})`;
-  reviewSection.appendChild(newReview);
-};
-
 const deleteMovie = async () => {
   loadingScreen();
   const res = await fetch(window.location.href, {
@@ -214,8 +203,3 @@ const addListeners = () => {
 };
 
 addListeners();
-
-
-const logout = () => {
-  window.location.pathname = '/logout';
-};

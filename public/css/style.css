@@ -22,6 +22,11 @@ body{
   opacity: 0;
 }
 
+.border_bottom{
+  padding-bottom: 10px;
+  border-bottom: 2px solid black
+}
+
 .hidden {
   visibility: hidden;
 }
