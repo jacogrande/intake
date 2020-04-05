@@ -90,7 +90,6 @@ const submitNewPassword = () => {
   loadingScreen();
   const password = document.getElementById('new_password_input').value;
   const confirmation = document.getElementById('password_confirmation_input');
-  x;
   if (password != confirmation.value) {
     console.log('tough');
     document.getElementById('passwords_dont_match').style.visibility = 'visible';
