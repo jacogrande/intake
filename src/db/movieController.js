@@ -143,6 +143,14 @@ const findMoviesByUser = async (movieList, userId) => {
 
 const getAllMovies = async () => await Movie.find();
 
+const findMovieById = async (_id) => {
+  const movie = await Movie.findOne({ _id }, (err, hit) => {
+    if (err) return err;
+    return hit;
+  });
+  return movie;
+};
+
 module.exports = {
   addMovie,
   findMovieByTitle,
@@ -152,4 +160,6 @@ module.exports = {
   findMoviesByUser,
   removePresence,
   getAllMovies,
+  findMovieById,
+  filterByUser,
 };

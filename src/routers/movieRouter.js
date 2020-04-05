@@ -7,6 +7,7 @@ const db = require('./db.js');
 
 const movieController = require('../db/movieController');
 const userController = require('../db/userController');
+const cache = require('../db/cache.js');
 
 const movieRouter = express.Router();
 
@@ -17,14 +18,16 @@ movieRouter.route('/')
       const allMovies = await movieController.getAllMovies();
       return res.json(allMovies);
     }
-    let movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
-
-    movieList = movieList.map((movie) => ({
-      title: movie.title,
-      total_rating: movie.total_rating,
-      poster: movie.poster,
-      _id: movie._id,
-    }));
+    const existsInCache = cache.checkCache(req.user._id);
+    let movieList = null;
+    if (existsInCache) { // the movie list exists in the cache
+      debug('cache hit');
+      movieList = existsInCache;
+    } else {
+      movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
+      cache.cacheMovieList(req.user._id.toString(), movieList);
+      debug(`movies cached to user with id: ${req.user._id}`);
+    }
 
     res.render('movies', { movieList, page_title: 'All Movies' });
   })
@@ -70,6 +73,13 @@ movieRouter.route('/')
         await movieController.addThemes(themeData, movieExists._id);// and themes
         await movieController.addDates(dates, movieExists._id);// and date
         await userController.addMovie(req.user._id, movieExists._id); // then add the movie to the user's seen movie list
+
+        const cachedMovie = movieExists; // create personalized movie for cache
+        cachedMovie.ratings = ratings;
+        cachedMovie.themeData = themeData;
+        cachedMovie.date_added = dates;
+        cache.addMovie(req.user._id, cachedMovie); // update the cache
+
         return res.status(200).json({ response: 'new ratings / theme added' });
       }
       return res.status(200).json({ response: 'error: movie already seen by user' });
@@ -107,11 +117,18 @@ movieRouter.route('/:id')
   .get(passport.isAuthenticated, async (req, res) => { // returns all data on identified movie
     const { id } = req.params;
     try {
-      const movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
-      const selection = db.find(movieList, id);
-      if (selection) {
-        res.render('movies', { selection });
-      } else res.redirect('/movies');
+      if (req.user.movies.indexOf(id) != -1) {
+        const existsInCache = cache.checkCache(req.user._id);
+        // debug(existsInCache);
+        let movie = null;
+        if (existsInCache) {
+          movie = db.find(existsInCache, id);
+        } else movie = await movieController.findMovieById(id);
+        if (movie) {
+          return res.render('movies', { selection: movie });
+        }
+      }
+      return res.redirect('/movies');
     } catch (err) {
       res.send({ error: err });
     }
@@ -119,6 +136,9 @@ movieRouter.route('/:id')
   .delete(passport.isAuthenticated, async (req, res) => {
     const { id } = req.params;
     try {
+      let movie = await movieController.findMovieById(id);
+      movie = movieController.filterByUser(movie, req.user._id);
+      cache.removeMovie(req.user._id, movie);
       await movieController.removePresence(req.user._id, id);
       await userController.removeMovie(req.user._id, id);
       res.send('success');

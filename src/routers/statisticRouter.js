@@ -1,9 +1,10 @@
 const express = require('express');
-// const debug = require('debug')('index');
+const debug = require('debug')('index');
 const db = require('./db.js');
 const passport = require('../../auth.js');
 
 const movieController = require('../db/movieController');
+const cache = require('../db/cache.js');
 
 const statisticRouter = express.Router();
 
@@ -16,7 +17,16 @@ statisticRouter.route('/:property')
   .get(passport.isAuthenticated, async (req, res) => {
     const { property } = req.params;
     const { min } = req.query;
-    const movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
+    const existsInCache = cache.checkCache(req.user._id);
+    let movieList = null;
+    if (existsInCache) { // the movie list exists in the cache
+      debug('cache hit');
+      movieList = existsInCache;
+    } else {
+      movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
+      cache.cacheMovieList(req.user._id.toString(), movieList);
+      debug(`movies cached to user with id: ${req.user._id}`);
+    }
     const allValues = db.getValues(movieList, property);
     const data = {};
     allValues.forEach((value) => {
@@ -36,7 +46,16 @@ statisticRouter.route('/:property')
 statisticRouter.route('/:property/:value')
   .get(passport.isAuthenticated, async (req, res) => {
     const { value, property } = req.params;
-    const movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
+    const existsInCache = cache.checkCache(req.user._id);
+    let movieList = null;
+    if (existsInCache) { // the movie list exists in the cache
+      debug('cache hit');
+      movieList = existsInCache;
+    } else {
+      movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
+      cache.cacheMovieList(req.user._id.toString(), movieList);
+      debug(`movies cached to user with id: ${req.user._id}`);
+    }
     const results = db.findByValue(movieList, property, value, true); // call movie method that returns an array of all movies with the specified property value
     if (results.length > 0) {
       res.render('individualStats.ejs', { movies: results, title: `${property} : ${value}` });
