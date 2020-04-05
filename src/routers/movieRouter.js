@@ -69,10 +69,12 @@ movieRouter.route('/')
     if (movieExists) { // if the movie exists in the db
       const viewedByUser = (req.user.movies.indexOf(movieExists._id) !== -1);
       if (!viewedByUser) { // if the movie exists but the user hasn't seen it
-        await movieController.addRating(ratings, movieExists._id); // add the user's ratings
-        await movieController.addThemes(themeData, movieExists._id);// and themes
-        await movieController.addDates(dates, movieExists._id);// and date
-        await userController.addMovie(req.user._id, movieExists._id); // then add the movie to the user's seen movie list
+        await Promise.all([
+          movieController.addRating(ratings, movieExists._id), // add the user's ratings
+          movieController.addThemes(themeData, movieExists._id), // and themes
+          movieController.addDates(dates, movieExists._id), // and date
+          userController.addMovie(req.user._id, movieExists._id), // then add the movie to the user's seen movie list
+        ]);
 
         const cachedMovie = movieExists; // create personalized movie for cache
         cachedMovie.ratings = ratings;
@@ -138,7 +140,10 @@ movieRouter.route('/:id')
     try {
       let movie = await movieController.findMovieById(id);
       movie = movieController.filterByUser(movie, req.user._id);
-      cache.removeMovie(req.user._id, movie);
+      if (cache.checkCache(req.user._id)) {
+        cache.removeMovie(req.user._id, movie);
+      }
+      // await new Prom
       await movieController.removePresence(req.user._id, id);
       await userController.removeMovie(req.user._id, id);
       res.send('success');
