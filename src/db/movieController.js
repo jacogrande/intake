@@ -1,6 +1,5 @@
 const Movie = require('../schemas/movie.js');
 const debug = require('debug')('index');
-const sizeof = require('object-sizeof');
 
 const addMovie = (movieData) => {
   const newMovie = new Movie(movieData);
