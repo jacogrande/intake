@@ -132,6 +132,9 @@ userRouter.route('/passwordReset')
       } catch (err) {
         return res.status(401).json(err);
       }
+      if (!userId) {
+        return res.status(401).json('no user matches this email');
+      }
       if (userId.err) return res.send('error');
 
       const payload = {
