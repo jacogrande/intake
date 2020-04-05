@@ -4,7 +4,7 @@ const debug = require('debug')('index');
 const cache = new NodeCache();
 
 const cacheMovieList = (userId, movieList) => {
-  cache.set(userId.toString(), movieList, 3600);
+  cache.set(userId.toString(), movieList, 1800);
 };
 
 const checkCache = (userId) => cache.get(userId.toString());
