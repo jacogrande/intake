@@ -1,5 +1,6 @@
 const Movie = require('../schemas/movie.js');
 const debug = require('debug')('index');
+const sizeof = require('object-sizeof');
 
 const addMovie = (movieData) => {
   const newMovie = new Movie(movieData);
@@ -13,7 +14,7 @@ const findMovieByTitle = async (title) => {
   const movie = Movie.findOne({ title }, (err, movie) => {
     if (err) return err;
     return movie;
-  });
+  }).lean();
   return movie;
 };
 
@@ -136,7 +137,8 @@ const filterByUser = (movie, userId) => {
 };
 
 const findMoviesByUser = async (movieList, userId) => {
-  const movies = await Movie.find().where('_id').in(movieList).exec();
+  const movies = await Movie.find().where('_id').in(movieList).lean()
+    .exec();
   const filteredMovies = movies.map((movie) => filterByUser(movie, userId));
   return filteredMovies;
 };
@@ -147,7 +149,7 @@ const findMovieById = async (_id) => {
   const movie = await Movie.findOne({ _id }, (err, hit) => {
     if (err) return err;
     return hit;
-  });
+  }).lean();
   return movie;
 };
 

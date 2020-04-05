@@ -13,24 +13,6 @@ const addMovie = (userId, movieId) => { // function for adding a new movie to th
   });
 };
 
-const isViewed = async (userId, movieId) => { // function to check if a movie has been viewed by the specified user
-  const user = await User.findOne({ _id: userId }, (err) => {
-    if (err) return err;
-  });
-  if (user.movies.indexOf(movieId) === -1) {
-    return false;
-  }
-  return true;
-};
-
-const getMovies = async (userId) => {
-  const foundUser = await User.findOne({ _id: userId }, (err, user) => {
-    if (err) throw err;
-  });
-
-  return foundUser.movies;
-};
-
 const removeMovie = (userId, movieId) => {
   User.findOne({ _id: userId }, (err, user) => {
     if (err) return error;
@@ -44,7 +26,7 @@ const removeMovie = (userId, movieId) => {
 const findByEmail = (email) => User.findOne({ email }, (err, user) => {
   if (err) return { err };
   return { _id: user._id };
-});
+}).lean();
 
 const resetPassword = (_id, password) => User.findOne({ _id }, (err, user) => {
   if (err) return { err };
@@ -54,8 +36,6 @@ const resetPassword = (_id, password) => User.findOne({ _id }, (err, user) => {
 
 module.exports = {
   addMovie,
-  isViewed,
-  getMovies,
   removeMovie,
   findByEmail,
   resetPassword,
