@@ -25,7 +25,10 @@ const removeMovie = (userId, movieId) => {
 
 const findByEmail = (email) => User.findOne({ email }, (err, user) => {
   if (err) return { err };
-  return { _id: user._id };
+  if (user) {
+    return { _id: user._id };
+  }
+  return null;
 }).lean();
 
 const resetPassword = (_id, password) => User.findOne({ _id }, (err, user) => {
