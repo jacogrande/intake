@@ -126,7 +126,12 @@ userRouter.route('/passwordReset')
   .post(async (req, res) => {
     const { email } = req.body;
     if (email) {
-      const userId = await userController.findByEmail(email);
+      let userId = null;
+      try {
+        userId = await userController.findByEmail(email);
+      } catch (err) {
+        return res.status(401).json(err);
+      }
       if (userId.err) return res.send('error');
 
       const payload = {
