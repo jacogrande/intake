@@ -69,12 +69,11 @@ movieRouter.route('/')
     if (movieExists) { // if the movie exists in the db
       const viewedByUser = (req.user.movies.indexOf(movieExists._id) !== -1);
       if (!viewedByUser) { // if the movie exists but the user hasn't seen it
-        await Promise.all([
-          movieController.addRating(ratings, movieExists._id), // add the user's ratings
-          movieController.addThemes(themeData, movieExists._id), // and themes
-          movieController.addDates(dates, movieExists._id), // and date
-          userController.addMovie(req.user._id, movieExists._id), // then add the movie to the user's seen movie list
-        ]);
+        const ratingsAdded = movieController.addRating(ratings, movieExists._id); // add the user's ratings
+        const themesAdded = movieController.addThemes(themeData, movieExists._id); // and themes
+        const datesAdded = movieController.addDates(dates, movieExists._id); // and date
+        const movieAdded = userController.addMovie(req.user._id, movieExists._id); // then add the movie to the user's seen movie list
+        const parallelAwait = [await ratingsAdded, await themesAdded, await datesAdded, await movieAdded];
 
         const cachedMovie = movieExists; // create personalized movie for cache
         cachedMovie.ratings = ratings;
@@ -84,6 +83,7 @@ movieRouter.route('/')
 
         return res.status(200).json({ response: 'new ratings / theme added' });
       }
+      debug('movie already seen by user');
       return res.status(200).json({ response: 'error: movie already seen by user' });
     } // if the movie doesn't exist in the db
     const movieData = { // create a new movie
