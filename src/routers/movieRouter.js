@@ -73,7 +73,6 @@ movieRouter.route('/')
         const movieAdded = userController.addMovie(req.user._id, movieExists._id); // then add the movie to the user's seen movie list
         const parallelAwait = [await ratingsAdded, await themesAdded, await datesAdded, await movieAdded];
 
-        debug(date);
         const cachedMovie = movieExists; // create personalized movie for cache
         cachedMovie.entertainment_rating = entertainment_rating;
         cachedMovie.plot_rating = plot_rating;
@@ -114,6 +113,18 @@ movieRouter.route('/')
 
     const movieId = await movieController.addMovie(movieData); // add the movie to the db
     await userController.addMovie(req.user._id, movieId); // add the movie's id to the user's movie list
+
+    const cachedMovie = movieData; // create personalized movie for cache
+    cachedMovie.entertainment_rating = entertainment_rating;
+    cachedMovie.plot_rating = plot_rating;
+    cachedMovie.style_rating = style_rating;
+    cachedMovie.bias_rating = bias_rating;
+    cachedMovie.total_rating = entertainment_rating + plot_rating + style_rating + bias_rating;
+    cachedMovie.themes = themes;
+    cachedMovie.date_added = dates;
+    cachedMovie._id = movieId;
+    cache.addMovie(req.user._id, cachedMovie); // update the cache
+
     return res.status(200).json({ response: 'new movie added' });
   });
 
