@@ -186,7 +186,8 @@
                 </svg>
               </a>
               <div class="movie_options collapse" id = 'movie_options_box'>
-                <p class = 'clicker_cursor bold'><a data-toggle='modal' data-target="#deleteModal">Delete</a></p>
+                <p class = 'clicker_cursor bold border_bottom'><a data-toggle='modal' data-target="#editModal">Edit</a></p>
+                <p class = 'clicker_cursor bold bump_up'><a data-toggle='modal' data-target="#deleteModal">Delete</a></p>
               </div>
             </div>
           </div>
@@ -226,6 +227,76 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
               <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "deleteMovie()" >Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script type="text/javascript" src = '/js/edit.js'></script>
+      <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title primary">Edit Rating</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="container">
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Entertainment Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_edit' value = "<%=selection.entertainment_rating%>"> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Plot Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_edit' value = "<%=selection.plot_rating%>"> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Style Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_edit' value = "<%=selection.style_rating%>"> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 align_right">
+                    <p class = 'primary'>Bias Rating :</p>
+                  </div>
+                  <div class="col-lg-6 col-md-6 align_left">
+                    <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_edit' value = "<%=selection.bias_rating%>"> / 5
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-2 col-md-2">
+
+                  </div>
+                  <div id='editThemeWrapper' class = 'col-lg-10 col-md-10'>
+                    <% for(let i = 0; i < selection.themes.length; i++) { %>
+                      <script>addTheme_edit("<%=selection.themes[i]%>")</script>
+                    <% } %>
+                  </div>
+                  <div class="col-lg-2 col-md-2">
+
+                  </div>
+                  <div class="col-lg-12 col-md-12">
+                    <button type="button" class="btn btn-secondary" onclick = 'addTheme_edit()'>+ Add Theme</button>
+                    <br><br>
+                  </div>
+                </div>
+              </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "updateRating()" >Submit</button>
             </div>
           </div>
         </div>

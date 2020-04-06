@@ -38,11 +38,9 @@ movieRouter.route('/')
       return res.send({ error: apiData.err });
     }
 
-
     const {
       entertainment_rating, plot_rating, style_rating, bias_rating, themes, director_gender, writer_gender, date,
     } = req.body; // pull data from post request
-
 
     // create theme and rating objects to append to movie object
     const ratings = {
@@ -75,9 +73,14 @@ movieRouter.route('/')
         const movieAdded = userController.addMovie(req.user._id, movieExists._id); // then add the movie to the user's seen movie list
         const parallelAwait = [await ratingsAdded, await themesAdded, await datesAdded, await movieAdded];
 
+        debug(date);
         const cachedMovie = movieExists; // create personalized movie for cache
-        cachedMovie.ratings = ratings;
-        cachedMovie.themeData = themeData;
+        cachedMovie.entertainment_rating = entertainment_rating;
+        cachedMovie.plot_rating = plot_rating;
+        cachedMovie.style_rating = style_rating;
+        cachedMovie.bias_rating = bias_rating;
+        cachedMovie.total_rating = entertainment_rating + plot_rating + style_rating + bias_rating;
+        cachedMovie.themes = themes;
         cachedMovie.date_added = dates;
         cache.addMovie(req.user._id, cachedMovie); // update the cache
 
@@ -121,16 +124,24 @@ movieRouter.route('/:id')
     try {
       if (req.user.movies.indexOf(id) != -1) {
         const existsInCache = cache.checkCache(req.user._id);
-        // debug(existsInCache);
-        let movie = null;
+
+        // ===== OPTIMIZE =====
+
         if (existsInCache) {
-          movie = db.find(existsInCache, id);
-        } else movie = await movieController.findMovieById(id);
-        if (movie) {
+          debug('cache hit');
+          const movie = db.find(existsInCache, id);
           return res.render('movies', { selection: movie });
         }
+
+        movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
+        cache.cacheMovieList(req.user._id.toString(), movieList);
+        debug(`movies cached to user with id: ${req.user._id}`);
+        const cachedMovies = cache.checkCache(req.user._id);
+        const movie = db.find(cachedMovies, id);
+        return res.render('movies', { selection: movie });
       }
-      return res.redirect('/movies');
+
+      res.redirect('/movies');
     } catch (err) {
       res.send({ error: err });
     }
@@ -138,10 +149,8 @@ movieRouter.route('/:id')
   .delete(passport.isAuthenticated, async (req, res) => {
     const { id } = req.params;
     try {
-      let movie = await movieController.findMovieById(id);
-      movie = movieController.filterByUser(movie, req.user._id);
       if (cache.checkCache(req.user._id)) {
-        cache.removeMovie(req.user._id, movie);
+        cache.removeMovie(req.user._id, id);
       }
       // await new Prom
       await movieController.removePresence(req.user._id, id);
@@ -151,6 +160,41 @@ movieRouter.route('/:id')
       debug(err);
       res.sendStatus(401);
     }
+  })
+  .post(passport.isAuthenticated, async (req, res) => {
+    const { id } = req.params;
+    const {
+      entertainment_rating, plot_rating, style_rating, bias_rating,
+    } = req.body;
+
+    const total_rating = entertainment_rating + plot_rating + style_rating + bias_rating;
+
+
+    const ratings = {
+      entertainment_rating,
+      plot_rating,
+      style_rating,
+      bias_rating,
+      total_rating,
+      user_id: req.user._id,
+    };
+
+    const themes = {
+      themes: req.body.themes,
+      user_id: req.user._id,
+    };
+
+    const response = await movieController.updateMovieRating(ratings, themes, req.user._id, id);
+    if (response) {
+      return res.status(401);
+    }
+
+    const cacheResponse = cache.updateRating(req.user._id, id, ratings, themes);
+    if (cacheResponse) {
+      debug('cache updated');
+    }
+
+    res.status(200).json('success');
   });
 
 movieRouter.route('/search/:title')

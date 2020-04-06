@@ -152,6 +152,26 @@ const findMovieById = async (_id) => {
   return movie;
 };
 
+const updateMovieRating = async (ratings, themes, userId, _id) => {
+  Movie.findOne({ _id }, (err, movie) => {
+    if (err) return err;
+    if (movie) {
+      for (let i = 0; i < movie.ratings.length; i++) {
+        if (movie.ratings[i].user_id.toString() === userId.toString()) {
+          movie.ratings[i] = ratings;
+        }
+      }
+      for (let i = 0; i < movie.themes.length; i++) {
+        if (movie.themes[i].user_id.toString() === userId.toString()) {
+          movie.themes[i] = themes;
+        }
+      }
+      return movie.save((err) => err);
+    }
+    return 'no movie found';
+  });
+};
+
 module.exports = {
   addMovie,
   findMovieByTitle,
@@ -163,4 +183,5 @@ module.exports = {
   getAllMovies,
   findMovieById,
   filterByUser,
+  updateMovieRating,
 };

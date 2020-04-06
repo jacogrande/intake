@@ -22,7 +22,7 @@ const deleteMovie = async () => {
   if (res.status === 401) {
     console.log('error');
   } else {
-    window.location.reload();
+    window.location.pathname = '/movies';
   }
 };
 

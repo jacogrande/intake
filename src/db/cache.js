@@ -13,14 +13,29 @@ const addMovie = (userId, movie) => {
   const cacheData = checkCache(userId);
   cacheData.push(movie);
   cache.del(userId.toString());
-  cacheMovieList(cacheData);
+  cacheMovieList(userId, cacheData);
 };
 
-const removeMovie = (userId, movie) => {
+const removeMovie = (userId, id) => {
   const cacheData = checkCache(userId);
-  cacheData.splice(cacheData.findIndex((v) => v._id === movie._id), 1);
+  cacheData.splice(cacheData.findIndex((v) => v._id === id), 1);
   cache.del(userId.toString());
-  cacheMovieList(cacheData);
+  cacheMovieList(userId, cacheData);
+};
+
+const updateRating = (userId, movieId, ratings, themes) => {
+  debug('updating rating');
+  const cacheData = checkCache(userId);
+  for (let i = 0; i < cacheData.length; i++) {
+    if (cacheData[i]._id.toString() === movieId.toString()) {
+      cacheData[i].ratings = ratings;
+      cacheData[i].themes = themes;
+      cache.del(userId.toString());
+      cacheMovieList(cacheData);
+      return true;
+    }
+  }
+  return false;
 };
 
 module.exports = {
@@ -28,4 +43,5 @@ module.exports = {
   checkCache,
   addMovie,
   removeMovie,
+  updateRating,
 };
