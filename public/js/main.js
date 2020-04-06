@@ -52,10 +52,12 @@ const displayMovieList = (movies) => {
 
   let moviesAdded = 0;
   if (movies) {
+    let inc = 0;
     for (let i = 0; i < movies.length; i++) {
-      if (movies[i].Poster === 'N/A') break;
-      if (movies[i].Type != 'movie') break;
-      if (i % 2 === 0) {
+      if (movies[i].Poster === 'N/A' || movies[i].Type != 'movie') {
+        continue;
+      }
+      if (inc % 2 === 0) {
         newRow = document.createElement('div');
         newRow.className = 'row';
         movieDisplay.appendChild(newRow);
@@ -67,6 +69,7 @@ const displayMovieList = (movies) => {
       moviePoster.addEventListener('click', () => rateMovie(movies[i]));
       newRow.appendChild(moviePoster);
       moviesAdded++;
+      inc++;
     }
   } else {
     displaySearchError('No movies found...');
@@ -82,6 +85,7 @@ const displayMovieList = (movies) => {
 const search = async () => {
   const title = document.getElementById('searchBar').value;
   const results = await fetch(`/movies/search/${encodeURI(title)}`).then((response) => response.json());
+  console.log(results.results);
   displayMovieList(results.results);
 };
 
