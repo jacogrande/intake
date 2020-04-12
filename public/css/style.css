@@ -18,6 +18,10 @@ body{
   color: rgb(238, 77, 88);
 }
 
+.no_display {
+  display: none;
+}
+
 .clear {
   opacity: 0;
 }
@@ -126,7 +130,7 @@ a:hover {
 }
 
 .h2_break{
-  margin-top: 4.25em;
+  margin-top: 3em;
 }
 
 .bump_down{
@@ -335,14 +339,12 @@ a:hover {
 }
 
 textarea {
-  background: #1E262A;
-  border:none;
+  background: #192024;
+  border:1px solid black;
+  border-radius: 5px;
   color: #D5D5D5;
-}
-
-textarea:active, textarea:focus {
-  outline:none;
-  border:none;
+  width: 100%;
+  height:10vw;
 }
 
 .movie_options {
@@ -364,8 +366,9 @@ textarea:active, textarea:focus {
 
 .stat_link {
   text-align: center;
-  padding-top:45%;
-  padding-bottom: 45%;
+  padding:35% 0%;
+  width: 80%;
+  margin: 5% 0% 5% 10%;
   border: 1px solid #8EC3AF;
   border-radius: 100%;
   transition: background 0.5s;
@@ -497,15 +500,27 @@ textarea:active, textarea:focus {
 
 .theme_deleter {
   margin-left: 15px;
-  padding: 5px 10px;
+  padding: 1px 8px;
   border-radius: 100%;
+  transition: all 0.5s;
 }
 
 .theme_deleter:hover {
   cursor: pointer;
-  background: #181f22;
-  border: 1px solid rgb(238, 77, 88);
-  transition: all 0.2s;
+  color: rgb(238, 77, 88) !important;
+  background: #d5d5d5;
+  transition: all 0.5s;
+  opacity: 1;
+}
+
+.edit_icon {
+  margin-left: 15px;
+  border-radius: 100%;
+  transition: all 0.5s;
+}
+
+.edit_icon:hover {
+  opacity: 1 !important;
 }
 
 /* ===== Footer ====== */
@@ -598,6 +613,33 @@ textarea:active, textarea:focus {
   }
 }
 
+
+#reviewSection i{
+  margin-left: 15px;
+  padding: 5px;
+  border-radius:100%;
+  transition: all 0.5s;
+}
+
+#reviewSection i:hover{
+  background: #d5d5d5;
+  transition: all 0.5s;
+  color: #EF4AB5;
+}
+
+#reviewSection .upvoted {
+  color: #EF4AB5 !important;
+  background: #d5d5d5 !important;
+  padding: 5px;
+  border-radius:100%;
+}
+
+#reviewSection .indented {
+  margin-left: 15px;
+}
+
+
+
 /* fade */
 
 .fade_in {
@@ -659,7 +701,6 @@ textarea:active, textarea:focus {
   100% {
     opacity:1;
 }
-
 
 
 /*  */

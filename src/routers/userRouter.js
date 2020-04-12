@@ -7,6 +7,7 @@ const passport = require('../../auth.js');
 
 const movieController = require('../db/movieController');
 const userController = require('../db/userController');
+const cache = require('../db/cache.js');
 
 const secret = '123123';
 const token = jwt.sign({ body: 'goteem', exp: Math.floor(Date.now() / 1000) + (60 * 60) }, secret);
@@ -55,12 +56,13 @@ userRouter.route('/register') // registration route
 userRouter.route('/login')
   .get((req, res) => {
     if (req.user != null) {
-      res.redirect('/movies');
+      res.redirect('/');
     } else {
       res.render('login');
     }
   })
   .post(passport.authenticate('local', { failureRedirect: '/login' }), (req, res) => {
+    cache.clearCache(req.user._id);
     res.send({ success: true });
   });
 

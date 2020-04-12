@@ -29,7 +29,7 @@ movieRouter.route('/')
       debug(`movies cached to user with id: ${req.user._id}`);
     }
 
-    res.render('movies', { movieList, page_title: 'All Movies' });
+    return res.render('movies', { movieList, page_title: 'All Movies' });
   })
   .post(passport.isAuthenticated, async (req, res) => {
     const { imdbid } = req.body;
@@ -123,6 +123,7 @@ movieRouter.route('/')
     cachedMovie.themes = themes;
     cachedMovie.date_added = dates;
     cachedMovie._id = movieId;
+    cachedMovie.reviews = [];
     cache.addMovie(req.user._id, cachedMovie); // update the cache
 
     return res.status(200).json({ response: 'new movie added' });
@@ -138,22 +139,45 @@ movieRouter.route('/:id')
 
         // ===== OPTIMIZE =====
 
+        let { upvoted_reviews } = req.user;
+        if (!upvoted_reviews) {
+          upvoted_reviews = { reviews: [] };
+        } else {
+          upvoted_reviews = upvoted_reviews.find((e) => e.movie_id.toString() === id.toString());
+          if (!upvoted_reviews) {
+            upvoted_reviews = { reviews: [] };
+          }
+        }
+
+
         if (existsInCache) {
           debug('cache hit');
           const movie = db.find(existsInCache, id);
-          return res.render('movies', { selection: movie });
+          const reviewed = movie.reviews.findIndex((e) => e.user_id.toString() === req.user._id.toString());
+          return res.render('movies', {
+            selection: movie, username: req.user.username, upvoted_reviews: upvoted_reviews.reviews, reviewed,
+          });
         }
 
-        movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
-        cache.cacheMovieList(req.user._id.toString(), movieList);
-        debug(`movies cached to user with id: ${req.user._id}`);
-        const cachedMovies = cache.checkCache(req.user._id);
-        const movie = db.find(cachedMovies, id);
-        return res.render('movies', { selection: movie });
+        try {
+          movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
+          cache.cacheMovieList(req.user._id.toString(), movieList);
+          debug(`movies cached to user with id: ${req.user._id}`);
+          const cachedMovies = cache.checkCache(req.user._id);
+          const movie = db.find(cachedMovies, id);
+          const reviewed = movie.reviews.findIndex((e) => e.user_id.toString() === req.user._id.toString());
+          return res.render('movies', {
+            selection: movie, username: req.user.username, upvoted_reviews: upvoted_reviews.reviews, reviewed,
+          });
+        } catch (err) {
+          debug(err);
+          return res.send(err);
+        }
       }
 
       res.redirect('/movies');
     } catch (err) {
+      debug(err);
       res.send({ error: err });
     }
   })
@@ -206,6 +230,90 @@ movieRouter.route('/:id')
     }
 
     res.status(200).json('success');
+  });
+
+movieRouter.route('/:id/review')
+  .post(passport.isAuthenticated, async (req, res) => {
+    const { id } = req.params;
+    const { review } = req.body;
+    try {
+      let reviewId = await movieController.addReview(review, req.user._id, req.user.username, id);
+      reviewId = reviewId.reviews[reviewId.reviews.length - 1]._id;
+      cache.addReview(req.user._id, req.user.username, review, id, reviewId);
+    } catch (err) {
+      debug(err);
+      return res.status(401).json(err);
+    }
+    res.status(200).json();
+  });
+
+movieRouter.route('/:id/review/:review_id') // upvote
+  .post(passport.isAuthenticated, async (req, res) => {
+    const { vote } = req.body;
+    const { id, review_id } = req.params;
+    // PROCESS:
+    // check to see if user has upvoted the review
+    // see if that correlates with the vote action (>0 = upvote, < 0 = downvote)
+    // if it does, modify the review upvote count and the user's upvote history
+    const { upvoted_reviews } = req.user;
+    if (!upvoted_reviews) upvoted_reviews = [];
+    const currentMovie = upvoted_reviews.find((e) => e.movie_id.toString() === id.toString()); // get the reviews for this movie
+
+    if (vote === 1) { // if liked
+      if (!currentMovie || currentMovie.reviews.indexOf(review_id) === -1) { // if the review doesn't exist in the movie or the movie doesn't exist
+        debug('like');
+        try {
+          userController.addReview(req.user._id, id, review_id); // add to users reviewed list
+          movieController.upvoteReview(id, review_id, req.user._id);
+          cache.clearCache(req.user._id);
+        } catch (err) {
+          debug(err);
+          return res.status(401).json(err);
+        }
+      } else debug('review already liked');
+    } else if (currentMovie.reviews.indexOf(review_id) != -1 && vote === -1) {
+      debug('dislike');
+      try {
+        userController.removeReview(req.user._id, id, review_id);
+        movieController.downvoteReview(id, review_id, req.user._id);
+      } catch (err) {
+        debug(err);
+        return res.status(401).json(err);
+      }
+    }
+
+
+    res.status(200);
+  })
+  .delete(passport.isAuthenticated, async (req, res) => {
+    const { id, review_id } = req.params;
+    try {
+      const users = await movieController.deleteReview(id, review_id, req.user.username);
+      users.forEach((user) => {
+        debug(`review data removed from user with id: ${user}`);
+        userController.removeReview(user, id, review_id);
+      });
+      cache.deleteReview(id, review_id, req.user.username, req.user._id);
+      return res.status(200).json('success');
+    } catch (err) {
+      debug(err);
+      return res.status(401).json(err);
+    }
+  });
+
+movieRouter.route('/:id/edit_review/:review_id')
+  .post(passport.isAuthenticated, async (req, res) => {
+    const { id, review_id } = req.params;
+    const { review } = req.body;
+    try {
+      await movieController.updateReview(id, review_id, req.user.username, review);
+      cache.updateReview(id, review_id, req.user.username, req.user._id, review);
+      debug('review updated!');
+      return res.send('success');
+    } catch (err) {
+      debug(err);
+      return res.send(err);
+    }
   });
 
 movieRouter.route('/search/:title')

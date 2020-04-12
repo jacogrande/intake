@@ -36,6 +36,8 @@ const MovieSchema = new mongoose.Schema({
     user_id: String,
     username: String,
     date_added: { type: String, default: Date.now().toString() },
+    upvotes: { type: Number, default: 0 },
+    upvoted_by: [String],
   }],
 });
 

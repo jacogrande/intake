@@ -172,6 +172,73 @@ const updateMovieRating = async (ratings, themes, userId, _id) => {
   });
 };
 
+const addReview = async (review, userId, username, _id) => {
+  const movie = await Movie.findOne({ _id });
+  if (movie) {
+    movie.reviews.push({
+      review,
+      user_id: userId,
+      username,
+    });
+    await movie.save((err) => err);
+    return movie;
+  }
+};
+
+const deleteReview = async (_id, review_id, username) => {
+  const reviews = await Movie.findOne({ _id }).select('reviews');
+  const target = reviews.reviews.find((e) => e._id.toString() === review_id.toString());
+  if (target.username === username) { // validated
+    const users = target.upvoted_by;
+    reviews.reviews.splice(reviews.reviews.indexOf(target), 1);
+    await reviews.save((err) => {
+      if (err) debug(err);
+    });
+    return users;
+  }
+  return [];
+};
+
+const upvoteReview = async (_id, reviewId, userId) => {
+  const movie = await Movie.findOne({ _id }).select('reviews');
+  const reviewIndex = movie.reviews.findIndex((e) => e._id.toString() === reviewId.toString());
+  if (movie.reviews[reviewIndex].upvoted_by.indexOf(userId) === -1) {
+    movie.reviews[reviewIndex].upvotes++;
+    movie.reviews[reviewIndex].upvoted_by.push(userId);
+    return await movie.save((err) => {
+      if (err) debug(err);
+    });
+  }
+  debug('already upvoted');
+};
+
+const downvoteReview = async (_id, reviewId, userId) => {
+  const movie = await Movie.findOne({ _id }).select('reviews'); // get the reviews
+  const reviewIndex = movie.reviews.findIndex((e) => e._id.toString() === reviewId.toString()); // find the target review
+  if (movie.reviews[reviewIndex].upvoted_by.indexOf(userId) != -1) { // if the user has upvoted the review
+    movie.reviews[reviewIndex].upvotes -= 1;
+    movie.reviews[reviewIndex].upvoted_by.splice(movie.reviews[reviewIndex].upvoted_by.indexOf(userId), 1);
+    return await movie.save((err) => {
+      if (err) debug(err);
+    });
+  }
+  debug('already downvoted');
+};
+
+const updateReview = async (_id, reviewId, username, review) => {
+  const movie = await Movie.findOne({ _id }).select('reviews');
+  const reviewIndex = movie.reviews.findIndex((e) => e._id.toString() === reviewId.toString());
+  if (movie.reviews[reviewIndex].username === username) {
+    debug('movie found and validated');
+    movie.reviews[reviewIndex].review = review;
+    return await movie.save((err) => {
+      if (err) debug(err);
+    });
+  }
+  return false;
+};
+
+
 module.exports = {
   addMovie,
   findMovieByTitle,
@@ -184,4 +251,9 @@ module.exports = {
   findMovieById,
   filterByUser,
   updateMovieRating,
+  addReview,
+  deleteReview,
+  upvoteReview,
+  downvoteReview,
+  updateReview,
 };

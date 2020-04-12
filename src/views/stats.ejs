@@ -66,13 +66,11 @@
                 {display: 'Writers', src: 'writer'},
                 {display: 'Content Ratings', src: 'rated'},
                 {display: 'Genres', src: 'genres'},
-                {display: 'Director Genders', src: 'director_gender'},
-                {display: 'Writer Genders', src: 'writer_gender'},
                 {display: 'Runtimes', src: 'runtime'},
                 {display: 'Themes', src: 'themes'},
               ] %>
             <% stat_fields.forEach((stat) => {%>
-              <div class="col-lg-3 col-md-3">
+              <div class="col-lg-4 col-md-4">
                 <a href= <%= '/stats/' + stat.src %> ><p class = 'stat_link'><%= stat.display %></p></a>
               </div>
             <%}) %>

@@ -19,6 +19,10 @@ const UserSchema = new mongoose.Schema({
   movies: [String],
   date_registered: { type: Date, default: Date.now },
   friends: [String],
+  upvoted_reviews: [{
+    movie_id: String,
+    reviews: [String],
+  }],
 });
 
 UserSchema.plugin(uniqueValidator);

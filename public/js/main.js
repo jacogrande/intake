@@ -113,7 +113,7 @@ const addTheme = () => { // adds a theme input to the modal
   themeWrapper.appendChild(theme);
   const themeDeleter = document.createElement('span');
   themeDeleter.className = 'theme_deleter';
-  themeDeleter.innerHTML = 'x';
+  themeDeleter.innerHTML = '&times;';
   const br = document.createElement('br');
   themeDeleter.addEventListener('click', (e) => {
     themeWrapper.removeChild(theme);

@@ -7,6 +7,7 @@
     <!-- CSS links -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
   </head>
   <body>
@@ -85,7 +86,7 @@
         <% } else { %>
           <div class="row">
             <div class="col-lg-3">
-              <p class = 'clicker_cursor float_left'><a href="/movies" class = 'primary'>Movies / </p>
+              <p class = 'clicker_cursor float_left'><a href="/movies" class = 'primary'>Movies / </a></p>
             </div>
           </div>
           <div class="row">
@@ -114,55 +115,87 @@
               </p>
               <p><span class = 'primary'>Year Released : </span> <a href = <%='/stats/year/' + selection.year %>> <%= selection.year %></a></p>
               <p><span class = 'primary'>Rated : </span> <a href = <%='/stats/rated/' + selection.rated %>> <%= selection.rated %></a></p>
-              <p><span class = 'primary'>Runtime : </span> <a href = <%= '/stats/runtime/' + encodeURI(selection.runtime) %>> <%= selection.runtime %></p>
+              <p><span class = 'primary'>Runtime : </span> <a href = <%= '/stats/runtime/' + encodeURI(selection.runtime) %>> <%= selection.runtime %></a></p>
             </div>
             <div class="col-lg-4 align_left h2_break">
-              <p class = 'bump_down'></p>
-              <p><span class = 'primary'>Entertainment Rating : </span> <a href = <%='/stats/entertainment_rating/' + selection.entertainment_rating %>>
-                <svg height="10" width="120">
-                <% for(let i = 1; i <= 5; i++){ %>
-                  <% if(i <= selection.entertainment_rating){ %>
-                    <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
-                  <% } else { %>
-                    <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
-                  <% } %>
-                <% } %>
-              </svg>
-              </a></p>
-              <p><span class = 'primary '>Plot Rating : </span> <a href = <%='/stats/plot_rating/' + selection.plot_rating %>>
-                <svg height="10" width="120">
-                <% for(let i = 1; i <= 5; i++){ %>
-                  <% if(i <= selection.plot_rating){ %>
-                    <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
-                  <% } else { %>
-                    <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
-                  <% } %>
-                <% } %>
-              </svg>
-              </a></p>
-              <p><span class = 'primary '>Style Rating : </span> <a href = <%='/stats/style_rating/' + selection.style_rating %>>
-                <svg height="10" width="120">
+              <div class="row">
+                <div class = 'col-lg-6'>
+                  <p><span class = 'primary'>Entertainment Rating : </span>
+                </div>
+                <div class="col-lg-6">
+                  <p><a href = <%='/stats/entertainment_rating/' + selection.entertainment_rating %>>
+                  <svg height="10" width="120">
                   <% for(let i = 1; i <= 5; i++){ %>
-                    <% if(i <= selection.style_rating){ %>
+                    <% if(i <= selection.entertainment_rating){ %>
                       <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
                     <% } else { %>
                       <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
                     <% } %>
                   <% } %>
-                </svg>
-              </a></p>
-              <p><span class = 'primary '>Bias : </span> <a href = <%='/stats/bias_rating/' + selection.bias_rating %>>
-                <svg height="10" width="120">
-                <% for(let i = 1; i <= 5; i++){ %>
-                  <% if(i <= selection.bias_rating){ %>
-                    <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
-                  <% } else { %>
-                    <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
-                  <% } %>
-                <% } %>
-              </svg>
-              </a></p>
-              <p><span class = 'primary'>Total Rating : </span> <a href = "/stats/total_rating/<%=selection.total_rating%>"><%=selection.total_rating %> / 20 </a>
+                  </svg>
+                  </a></p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <p><span class = 'primary '>Plot Rating : </span> </p>
+                </div>
+                <div class="col-lg-6">
+                  <p><a href = <%='/stats/plot_rating/' + selection.plot_rating %>>
+                    <svg height="10" width="120">
+                    <% for(let i = 1; i <= 5; i++){ %>
+                      <% if(i <= selection.plot_rating){ %>
+                        <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
+                      <% } else { %>
+                        <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
+                      <% } %>
+                    <% } %>
+                  </svg>
+                  </a></p>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6">
+                  <p><span class = 'primary '>Style Rating : </span></p>
+                </div>
+                <div class="col-lg-6">
+                  <p><a href = <%='/stats/style_rating/' + selection.style_rating %>>
+                    <svg height="10" width="120">
+                      <% for(let i = 1; i <= 5; i++){ %>
+                        <% if(i <= selection.style_rating){ %>
+                          <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
+                        <% } else { %>
+                          <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
+                        <% } %>
+                      <% } %>
+                    </svg>
+                  </a></p>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6">
+                  <p><span class = 'primary '>Bias : </span><p>
+                </div>
+                <div class="col-lg-6">
+                  <p><a href = <%='/stats/bias_rating/' + selection.bias_rating %>>
+                    <svg height="10" width="120">
+                    <% for(let i = 1; i <= 5; i++){ %>
+                      <% if(i <= selection.bias_rating){ %>
+                        <circle cx=<%= i*20 %> cy="5" r="4" fill="#EF4AB5" />
+                      <% } else { %>
+                        <circle cx=<%= i*20 %> cy="5" r="4" fill = "#0e1214" />
+                      <% } %>
+                    <% } %>
+                  </svg>
+                  </a></p>
+                </div>
+              </div>
+
+              <p>
+                <span class = 'primary'>Total Rating : </span>
+                <a href = "/stats/total_rating/<%=selection.total_rating%>"><%=selection.total_rating %> / 20 </a>
                 <% if(selection.total_rating > 18) { %>
                   <span class="revealer">
                     <span class = 'flame_text'>19 Club</span>
@@ -197,8 +230,36 @@
             </div>
             <div class="col-lg-6 col-md-6" >
               <div id = 'reviewSection'>
-                <p class = 'padded_sm bold'>Reviews</p>
-                <p>Coming soon ... </p>
+                <h3 class = 'padded_sm bold'>Reviews</h3>
+                <%
+                  // sort ratings
+                  selection.reviews.sort((a,b) => b.upvotes - a.upvotes);
+
+                %>
+                <% selection.reviews.forEach((review)=>{ %>
+                  <p class = 'padded_sm'>
+                    <span class = 'primary'><%=review.username%>:</span>
+                    <% if(upvoted_reviews.indexOf(review._id) === -1){ %>
+                      <i class="fa fa-thumbs-up clicker_cursor" onclick = 'upvote("<%=review._id%>", this)'></i>
+                    <% } else { %>
+                      <i class="fa fa-thumbs-up clicker_cursor upvoted" activated = 'true' onclick = 'upvote("<%=review._id%>", this)'></i>
+                    <% } %>
+                    <span class = 'indented' id = '<%=review._id%>'><%=review.upvotes%></span>
+                    <% if(review.username === username) { %>
+                      <a class = 'float_right theme_deleter' onclick = 'setupDelete("<%=review._id%>")' data-toggle='modal' data-target="#deleteReviewModal">&times;</a>
+                      <a class = 'float_right edit_icon clicker_cursor' onclick='setupEdit("<%=review._id%>")' data-toggle='modal' data-target='#editReviewModal'><i class="fa fa-edit"></i></a>
+
+                    <% } %>
+                    <br>
+                    <span id = 'review_<%=review._id%>'><%=review.review%></span>
+                  </p>
+                <% }) %>
+                <textarea id = 'reviewWrapper' class = 'no_display'></textarea>
+                <br>
+                <% if(reviewed === -1) { %>
+                  <button type="button" class="btn btn-secondary float_right" id = 'addReviewBtn' onclick = 'setupReview()'>Add a Review</button>
+                  <button type="button" class="btn primary_btn float_right no_display" id = 'submitReviewBtn' onclick = 'submitReview()'>Submit Review</button>
+                <% } %>
               </div>
             </div>
           </div>
@@ -206,106 +267,146 @@
 
       </div>
 
-
-      <!-- ===== Review Modal ===== -->
       <!-- Modal -->
       <% if(locals.selection){ %>
 
-      <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title primary">Are you sure?</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <br>
-              <p class = 'warning'>This action is permanent</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-              <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "deleteMovie()" >Delete</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <script type="text/javascript" src = '/js/edit.js'></script>
-      <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title primary">Edit Rating</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="container">
-                <div class="row">
-                  <div class="col-lg-6 col-md-6 align_right">
-                    <p class = 'primary'>Entertainment Rating :</p>
-                  </div>
-                  <div class="col-lg-6 col-md-6 align_left">
-                    <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_edit' value = "<%=selection.entertainment_rating%>"> / 5
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-6 col-md-6 align_right">
-                    <p class = 'primary'>Plot Rating :</p>
-                  </div>
-                  <div class="col-lg-6 col-md-6 align_left">
-                    <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_edit' value = "<%=selection.plot_rating%>"> / 5
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-6 col-md-6 align_right">
-                    <p class = 'primary'>Style Rating :</p>
-                  </div>
-                  <div class="col-lg-6 col-md-6 align_left">
-                    <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_edit' value = "<%=selection.style_rating%>"> / 5
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-6 col-md-6 align_right">
-                    <p class = 'primary'>Bias Rating :</p>
-                  </div>
-                  <div class="col-lg-6 col-md-6 align_left">
-                    <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_edit' value = "<%=selection.bias_rating%>"> / 5
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-2 col-md-2">
-
-                  </div>
-                  <div id='editThemeWrapper' class = 'col-lg-10 col-md-10'>
-                    <% for(let i = 0; i < selection.themes.length; i++) { %>
-                      <script>addTheme_edit("<%=selection.themes[i]%>")</script>
-                    <% } %>
-                  </div>
-                  <div class="col-lg-2 col-md-2">
-
-                  </div>
-                  <div class="col-lg-12 col-md-12">
-                    <button type="button" class="btn btn-secondary" onclick = 'addTheme_edit()'>+ Add Theme</button>
-                    <br><br>
-                  </div>
-                </div>
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title primary">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-              <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "updateRating()" >Submit</button>
+              <div class="modal-body">
+                <br>
+                <p class = 'warning'>This action is permanent.</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "deleteMovie()" >Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="deleteReviewModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title primary">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                This action is permanent.
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="primary_btn btn" data-dismiss="modal" id = 'reviewDeleter'>Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="editReviewModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title primary">Edit Review</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <br>
+                <textarea id = 'editReviewTextarea'></textarea>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="primary_btn btn" data-dismiss="modal" id = 'reviewEditButton'>Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script type="text/javascript" src = '/js/edit.js'></script>
+        <div class="modal fade" id="editModal" tabindex="-2" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title primary">Edit Rating</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-lg-6 col-md-6 align_right">
+                      <p class = 'primary'>Entertainment Rating :</p>
+                    </div>
+                    <div class="col-lg-6 col-md-6 align_left">
+                      <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_edit' value = "<%=selection.entertainment_rating%>"> / 5
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-6 col-md-6 align_right">
+                      <p class = 'primary'>Plot Rating :</p>
+                    </div>
+                    <div class="col-lg-6 col-md-6 align_left">
+                      <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_edit' value = "<%=selection.plot_rating%>"> / 5
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-6 col-md-6 align_right">
+                      <p class = 'primary'>Style Rating :</p>
+                    </div>
+                    <div class="col-lg-6 col-md-6 align_left">
+                      <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_edit' value = "<%=selection.style_rating%>"> / 5
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-6 col-md-6 align_right">
+                      <p class = 'primary'>Bias Rating :</p>
+                    </div>
+                    <div class="col-lg-6 col-md-6 align_left">
+                      <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_edit' value = "<%=selection.bias_rating%>"> / 5
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-2 col-md-2">
+
+                    </div>
+                    <div id='editThemeWrapper' class = 'col-lg-10 col-md-10'>
+                      <% for(let i = 0; i < selection.themes.length; i++) { %>
+                        <script>addTheme_edit("<%=selection.themes[i]%>")</script>
+                      <% } %>
+                    </div>
+                    <div class="col-lg-2 col-md-2">
+
+                    </div>
+                    <div class="col-lg-12 col-md-12">
+                      <button type="button" class="btn btn-secondary" onclick = 'addTheme_edit()'>+ Add Theme</button>
+                      <br><br>
+                    </div>
+                  </div>
+                </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "updateRating()" >Submit</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
       <% } %>
 
+
       <!-- ===== Movie Modal ===== -->
-      <div class="modal fade" id="movieModal" tabindex="-1" role="dialog">
+      <div class="modal fade" id="movieModal" tabindex="1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -408,6 +509,7 @@
 
     <script src = '/js/loading.js'></script>
     <script type="text/javascript" src = '/js/main.js'></script>
+    <script type="text/javascript" src = '/js/reviews.js'></script>
     <script type="text/javascript" src = '/js/jquery.min.js'></script>
     <script type="text/javascript" src = '/js/bootstrap.min.js'></script>
   </body>
