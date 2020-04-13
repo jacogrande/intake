@@ -23,6 +23,10 @@ const UserSchema = new mongoose.Schema({
     movie_id: String,
     reviews: [String],
   }],
+  avatar: {
+    color: String,
+    tilemap: [[Number]],
+  },
 });
 
 UserSchema.plugin(uniqueValidator);

@@ -1,5 +1,6 @@
 const User = require('../schemas/user.js');
 const debug = require('debug')('index');
+const identicon = require('./identicon.js');
 
 const addMovie = (userId, movieId) => { // function for adding a new movie to the user's movie list
   User.findOne({ _id: userId }, (err, user) => {
@@ -86,6 +87,22 @@ const flushReviews = (_id) => User.findOne({ _id }, (err, user) => {
   user.save();
 });
 
+const createAvatar = async (_id, username) => {
+  const user = await User.findOne({ _id }).select('avatar');
+  const avatar = identicon(username);
+  if (avatar.color && avatar.tilemap) {
+    user.avatar = avatar;
+    await user.save((err) => {
+      if (err) {
+        debug(err);
+        throw err;
+      }
+    });
+    debug(avatar);
+    return avatar;
+  }
+};
+
 module.exports = {
   addMovie,
   removeMovie,
@@ -94,4 +111,5 @@ module.exports = {
   addReview,
   removeReview,
   flushReviews,
+  createAvatar,
 };

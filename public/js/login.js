@@ -36,6 +36,7 @@ const login = async () => {
 };
 
 const register = async () => { // function for registering users
+  console.log('registering');
   // get form data
   const username = document.getElementById('username_modal_input').value;
   const email = document.getElementById('email_modal_input').value;
@@ -55,18 +56,28 @@ const register = async () => { // function for registering users
     headers: {
       'Content-Type': 'application/json',
     },
-  }).then((response) => response.json);
-  if (serverResponse.error) { // check for errors
-    document.getElementById('invalid_modal_label').innerHTML = serverResponse.error.message;
-    document.getElementById('invalid_modal_label').style.opacity = 1; // notify the user of the error
-    return false;
-  }
-  if (serverResponse.success) { // if the registration succeeds
-    window.location.pathname = '/movies';
-  } else { // otherwise
-    document.getElementById('invalid_modal_label').innerHTML = 'That username is not available';
-    document.getElementById('invalid_modal_label').style.opacity = 1; // notify the user
-  }
+  }).then(async (response) => {
+    const { status } = response;
+    const json = await response.json();
+    if (status === 500) {
+      document.getElementById('invalid_modal_label').innerHTML = json.error;
+      document.getElementById('invalid_modal_label').style.opacity = 1; // notify the user of the error
+    } else {
+      window.location.pathname = '/movies';
+    }
+  });
+//   if (serverResponse.error) { // check for errors
+//     document.getElementById('invalid_modal_label').innerHTML = serverResponse.error.message;
+//     document.getElementById('invalid_modal_label').style.opacity = 1; // notify the user of the error
+//     return false;
+//   }
+//   if (serverResponse.success) { // if the registration succeeds
+//     window.location.pathname = '/movies';
+//   } else { // otherwise
+//     document.getElementById('invalid_modal_label').innerHTML = 'That username is not available';
+//     document.getElementById('invalid_modal_label').style.opacity = 1; // notify the user
+//   }
+// };
 };
 
 const resetPassword = () => {

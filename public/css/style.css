@@ -546,6 +546,26 @@ textarea {
   margin-top: -25px;
 }
 
+.bump_up_plus {
+  margin-top: -50px;
+}
+
+.avatarWrapper {
+  width: 150px;
+  height:150px;
+  background: #181f22;
+  border-radius: 100%;
+}
+
+#avatar {
+  width: 125px;
+  height:125px;
+  margin-top:15px;
+  /* padding:10px 10px; */
+  /* border: 1px solid #aaa; */
+  border-radius: 50%;
+}
+
 /* ===== ABOUT ====== */
 #jumbo {
   width: 100%;
@@ -564,6 +584,7 @@ textarea {
   height:100%;
   padding: 17vw 0;
 }
+
 
 /* ===== Loading Screen ===== */
 #loadingScreen {

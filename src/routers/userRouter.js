@@ -23,7 +23,7 @@ userRouter.route('/register') // registration route
       res.render('login');
     }
   })
-  .post((req, res) => { // post request to add a new user
+  .post(async (req, res) => { // post request to add a new user
     const { username } = req.body;
     const { password } = req.body;
     const { email } = req.body;
@@ -32,25 +32,29 @@ userRouter.route('/register') // registration route
       password,
       email,
     });
-    User.findOne({ username: newUser.username }, (err, response) => { // check to see if a user exists with the given username
-      if (err) {
-        return res.status(422).json({ error: err });
+    try {
+      const emailInUse = await User.findOne({ email: newUser.email }).select('').lean();
+      if (emailInUse) {
+        debug('email already in use');
+        return res.status(500).json({ error: 'Email already in use.' });
       }
-      if (response) { // if a user does exist
-        res.send({ success: false });
-      } else { // otherwise
-        newUser.save((err) => { // save the new user
-          if (err) {
-            debug(err);
-            return res.status(422).json({ error: err });
-          }
-          passport.authenticate('local')(req, res, () => { // redirect them to the profile page
-            debug('new user created');
-            res.send({ success: true });
-          });
-        });
+      const usernameInUse = await User.findOne({ username: newUser.username }).select('').lean();
+      if (usernameInUse) {
+        debug('username already in use');
+        return res.status(500).json({ error: 'Username already in use.' });
       }
-    });
+      newUser.save((err) => {
+        if (err) {
+          debug(err);
+          return res.status(500).json(err);
+        }
+        debug(`new user created with username: ${newUser.username}`);
+        passport.authenticate('local')(req, res, () => res.status(200).json('success'));
+      });
+    } catch (err) {
+      debug(err);
+      return res.status(500).json(err);
+    }
   });
 
 userRouter.route('/login')
@@ -77,7 +81,17 @@ userRouter.route('/profile') // profile page
       _id: movie._id,
     }));
 
-    res.render('profile', { username: req.user.username, movies: movieList });
+    if (!req.user.avatar.color) {
+      try {
+        debug('creating avatar');
+        req.user.avatar = await userController.createAvatar(req.user._id, req.user.username);
+      } catch (err) {
+        debug(err);
+        res.status(500).json('error generating identicon');
+      }
+    }
+
+    res.render('profile', { username: req.user.username, movies: movieList, avatar: req.user.avatar });
   });
 
 // userRouter.route('/test')
