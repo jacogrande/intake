@@ -61,6 +61,8 @@
       %>
 
       <%
+        movies.sort((a, b) => b.total_rating - a.total_rating)
+
         // finding averages for all ratings
         let total = 0;
         let bias = 0;
