@@ -32,7 +32,11 @@
               <a class="nav-link" href="/stats">STATS</a>
             </li>
             <li class="nav-item">
+              <% if(friend_requests.length > 0) { %>
+                <a class="nav-link" href="/profile">PROFILE <div class = 'friendRequestNotification float_right'><p><%=friend_requests.length %></p></div></a>
+              <% } else { %>
                 <a class="nav-link" href="/profile">PROFILE</a>
+              <% } %>
             </li>
             <li class="nav_button">
               <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>
@@ -77,13 +81,20 @@
               <% movieList.forEach( (movie) => {%>
                 <div class="col-lg-3 col-md-3">
                   <a href = <%= '/movies/' + movie._id %>><img src=<%= movie.poster %> width="150" alt=<%= movie.title %> class = 'poster'/></a>
-                  <p class = 'rating_overview'><%= movie.total_rating %> / 20</p>
+                  <p><%= movie.total_rating %> / 20</p>
                 </div>
               <%}) %>
             <% } %>
           </div>
         <!-- for selected movie -->
         <% } else { %>
+          <% if(locals.friend_username) { %>
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <h2><%=friend_username%>'s ratings</h2>
+              </div>
+            </div>
+          <% } %>
           <div class="row">
             <div class="col-lg-3">
               <p class = 'clicker_cursor float_left'><a href="/movies" class = 'primary'>Movies / </a></p>
@@ -210,19 +221,21 @@
               </p>
               <p><span class = 'primary'>Date Viewed : </span> <%=getFormattedDate(selection.date_added.date)%> </p>
             </div>
-            <div class="col-lg-1 col-md-1 match_top">
-              <a href = "#movie_options_box" data-toggle="collapse">
-                <svg height="10" width="120" class = 'hover_opacity clicker_cursor'>
-                  <circle cx="17" cy="5" r="3" fill="#D5D5D5" />
-                  <circle cx="32" cy="5" r="3" fill="#D5D5D5" />
-                  <circle cx=47 cy="5" r="3" fill="#D5D5D5" />
-                </svg>
-              </a>
-              <div class="movie_options collapse" id = 'movie_options_box'>
-                <p class = 'clicker_cursor bold border_bottom'><a data-toggle='modal' data-target="#editModal">Edit</a></p>
-                <p class = 'clicker_cursor bold bump_up'><a data-toggle='modal' data-target="#deleteModal">Delete</a></p>
+            <% if(!locals.friend_username) { %>
+              <div class="col-lg-1 col-md-1 match_top">
+                <a href = "#movie_options_box" data-toggle="collapse">
+                  <svg height="10" width="120" class = 'hover_opacity clicker_cursor'>
+                    <circle cx="17" cy="5" r="3" fill="#D5D5D5" />
+                    <circle cx="32" cy="5" r="3" fill="#D5D5D5" />
+                    <circle cx=47 cy="5" r="3" fill="#D5D5D5" />
+                  </svg>
+                </a>
+                <div class="movie_options collapse" id = 'movie_options_box'>
+                  <p class = 'clicker_cursor bold border_bottom'><a data-toggle='modal' data-target="#editModal">Edit</a></p>
+                  <p class = 'clicker_cursor bold bump_up'><a data-toggle='modal' data-target="#deleteModal">Delete</a></p>
+                </div>
               </div>
-            </div>
+            <% } %>
           </div>
           <div class="row top_seperator align_left">
             <div class="col-lg-6 col-md-6 right_border">
@@ -254,11 +267,14 @@
                     <span id = 'review_<%=review._id%>'><%=review.review%></span>
                   </p>
                 <% }) %>
+
                 <textarea id = 'reviewWrapper' class = 'no_display'></textarea>
-                <br>
-                <% if(reviewed === -1) { %>
-                  <button type="button" class="btn btn-secondary float_right" id = 'addReviewBtn' onclick = 'setupReview()'>Add a Review</button>
-                  <button type="button" class="btn primary_btn float_right no_display" id = 'submitReviewBtn' onclick = 'submitReview()'>Submit Review</button>
+                <% if(!locals.friend_username) { %>
+                  <br>
+                  <% if(reviewed === -1) { %>
+                    <button type="button" class="btn btn-secondary float_right" id = 'addReviewBtn' onclick = 'setupReview()'>Add a Review</button>
+                    <button type="button" class="btn primary_btn float_right no_display" id = 'submitReviewBtn' onclick = 'submitReview()'>Submit Review</button>
+                  <% } %>
                 <% } %>
               </div>
             </div>
@@ -270,138 +286,140 @@
       <!-- Modal -->
       <% if(locals.selection){ %>
 
-        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title primary">Are you sure?</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <br>
-                <p class = 'warning'>This action is permanent.</p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "deleteMovie()" >Delete</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="modal fade" id="deleteReviewModal" tabindex="-1" role="dialog">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title primary">Are you sure?</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                This action is permanent.
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="primary_btn btn" data-dismiss="modal" id = 'reviewDeleter'>Delete</button>
+        <% if(!locals.friend_username) { %>
+          <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title primary">Are you sure?</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <br>
+                  <p class = 'warning'>This action is permanent.</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "deleteMovie()" >Delete</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="modal fade" id="editReviewModal" tabindex="-1" role="dialog">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title primary">Edit Review</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <br>
-                <textarea id = 'editReviewTextarea'></textarea>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="primary_btn btn" data-dismiss="modal" id = 'reviewEditButton'>Submit</button>
+          <div class="modal fade" id="deleteReviewModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title primary">Are you sure?</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  This action is permanent.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="primary_btn btn" data-dismiss="modal" id = 'reviewDeleter'>Delete</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <script type="text/javascript" src = '/js/edit.js'></script>
-        <div class="modal fade" id="editModal" tabindex="-2" role="dialog">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title primary">Edit Rating</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
+          <div class="modal fade" id="editReviewModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title primary">Edit Review</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <br>
+                  <textarea id = 'editReviewTextarea'></textarea>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="primary_btn btn" data-dismiss="modal" id = 'reviewEditButton'>Submit</button>
+                </div>
               </div>
-              <div class="modal-body">
-                <div class="container">
-                  <div class="row">
-                    <div class="col-lg-6 col-md-6 align_right">
-                      <p class = 'primary'>Entertainment Rating :</p>
-                    </div>
-                    <div class="col-lg-6 col-md-6 align_left">
-                      <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_edit' value = "<%=selection.entertainment_rating%>"> / 5
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-6 col-md-6 align_right">
-                      <p class = 'primary'>Plot Rating :</p>
-                    </div>
-                    <div class="col-lg-6 col-md-6 align_left">
-                      <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_edit' value = "<%=selection.plot_rating%>"> / 5
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-6 col-md-6 align_right">
-                      <p class = 'primary'>Style Rating :</p>
-                    </div>
-                    <div class="col-lg-6 col-md-6 align_left">
-                      <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_edit' value = "<%=selection.style_rating%>"> / 5
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-6 col-md-6 align_right">
-                      <p class = 'primary'>Bias Rating :</p>
-                    </div>
-                    <div class="col-lg-6 col-md-6 align_left">
-                      <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_edit' value = "<%=selection.bias_rating%>"> / 5
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-2 col-md-2">
+            </div>
+          </div>
 
+          <script type="text/javascript" src = '/js/edit.js'></script>
+          <div class="modal fade" id="editModal" tabindex="-2" role="dialog">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title primary">Edit Rating</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-lg-6 col-md-6 align_right">
+                        <p class = 'primary'>Entertainment Rating :</p>
+                      </div>
+                      <div class="col-lg-6 col-md-6 align_left">
+                        <input type="text" maxlength="1" class = 'rating_input' id = 'entertainment_rating_edit' value = "<%=selection.entertainment_rating%>"> / 5
+                      </div>
                     </div>
-                    <div id='editThemeWrapper' class = 'col-lg-10 col-md-10'>
-                      <% for(let i = 0; i < selection.themes.length; i++) { %>
-                        <script>addTheme_edit("<%=selection.themes[i]%>")</script>
-                      <% } %>
+                    <div class="row">
+                      <div class="col-lg-6 col-md-6 align_right">
+                        <p class = 'primary'>Plot Rating :</p>
+                      </div>
+                      <div class="col-lg-6 col-md-6 align_left">
+                        <input type="text" maxlength="1" class = 'rating_input' id = 'plot_rating_edit' value = "<%=selection.plot_rating%>"> / 5
+                      </div>
                     </div>
-                    <div class="col-lg-2 col-md-2">
+                    <div class="row">
+                      <div class="col-lg-6 col-md-6 align_right">
+                        <p class = 'primary'>Style Rating :</p>
+                      </div>
+                      <div class="col-lg-6 col-md-6 align_left">
+                        <input type="text" maxlength="1" class = 'rating_input' id = 'style_rating_edit' value = "<%=selection.style_rating%>"> / 5
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-6 col-md-6 align_right">
+                        <p class = 'primary'>Bias Rating :</p>
+                      </div>
+                      <div class="col-lg-6 col-md-6 align_left">
+                        <input type="text" maxlength="1" class = 'rating_input' id = 'bias_rating_edit' value = "<%=selection.bias_rating%>"> / 5
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-2 col-md-2">
 
+                      </div>
+                      <div id='editThemeWrapper' class = 'col-lg-10 col-md-10'>
+                        <% for(let i = 0; i < selection.themes.length; i++) { %>
+                          <script>addTheme_edit("<%=selection.themes[i]%>")</script>
+                        <% } %>
+                      </div>
+                      <div class="col-lg-2 col-md-2">
+
+                      </div>
+                      <div class="col-lg-12 col-md-12">
+                        <button type="button" class="btn btn-secondary" onclick = 'addTheme_edit()'>+ Add Theme</button>
+                        <br><br>
+                      </div>
                     </div>
-                    <div class="col-lg-12 col-md-12">
-                      <button type="button" class="btn btn-secondary" onclick = 'addTheme_edit()'>+ Add Theme</button>
-                      <br><br>
-                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "updateRating()" >Submit</button>
                   </div>
                 </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="primary_btn btn" data-dismiss="modal" onclick= "updateRating()" >Submit</button>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        <% } %>
       <% } %>
 
 

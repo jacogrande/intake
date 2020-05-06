@@ -32,7 +32,11 @@
                   <a class="nav-link" href="/stats">STATS</a>
               </li>
               <li class="nav-item">
+                <% if(friend_requests.length > 0) { %>
+                  <a class="nav-link" href="/profile">PROFILE <div class = 'friendRequestNotification float_right'><p><%=friend_requests.length %></p></div></a>
+                <% } else { %>
                   <a class="nav-link" href="/profile">PROFILE</a>
+                <% } %>
               </li>
               <li class="nav_button">
                 <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>

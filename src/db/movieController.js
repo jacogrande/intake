@@ -1,5 +1,6 @@
 const Movie = require('../schemas/movie.js');
 const debug = require('debug')('index');
+const omdb = require('../apis/omdb.js');
 
 const addMovie = (movieData) => {
   const newMovie = new Movie(movieData);
@@ -238,6 +239,27 @@ const updateReview = async (_id, reviewId, username, review) => {
   return false;
 };
 
+const refreshPosters = async () => {
+  const allMovies = await Movie.find().select('title poster');
+  console.log(allMovies);
+
+  for (let i = 0; i < allMovies.length; i++) {
+    let movieTitle = allMovies[i].title;
+    if (movieTitle.indexOf('-') != -1) {
+      movieTitle = movieTitle.replace(' - ', '-');
+    }
+    const movie = await omdb.getMovies(movieTitle);
+    if (movie instanceof Array) {
+      const selectedMovie = movie.find((selection) => selection.Title === allMovies[i].title);
+      if (selectedMovie) {
+        const movieData = await omdb.fetch(selectedMovie.imdbID);
+        allMovies[i].poster = movieData.poster;
+        allMovies[i].save();
+      }
+    }
+  }
+};
+
 
 module.exports = {
   addMovie,
@@ -256,4 +278,5 @@ module.exports = {
   upvoteReview,
   downvoteReview,
   updateReview,
+  refreshPosters,
 };

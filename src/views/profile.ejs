@@ -32,7 +32,11 @@
               <a class="nav-link" href="/stats">STATS</a>
             </li>
             <li class="nav-item active">
+              <% if(friend_requests.length > 0) { %>
+                <a class="nav-link" href="/profile">PROFILE <div class = 'friendRequestNotification float_right'><p><%=friend_requests.length %></p></div></a>
+              <% } else { %>
                 <a class="nav-link" href="/profile">PROFILE</a>
+              <% } %>
             </li>
             <li class="nav_button">
               <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>
@@ -64,11 +68,47 @@
       <!-- ====== MAIN ====== -->
       <div class="container fade_in" id = 'main'>
         <div class="row">
+
+          <% if(friend_requests.length > 0) { %>
+            <div class = 'col-lg-3 col-md-3'></div>
+            <div class="friendRequestWrapper col-lg-5 col-md-5">
+              <h2> Friend Requests </h2>
+
+              <% for(let i = 0; i < friend_requests.length; i++) { %>
+                <div class = 'friendRequestBox row' id = 'request_box_<%=friend_requests[i]._id%>'>
+                  <div class = 'col-lg-4 col-md-4'>
+                    <svg width="60" height="60" class = 'avatarSmall'>
+                      <% for(let y = 0; y < 5; y++) {
+                        for(let x = 0; x < 5; x++) {
+                          if(friend_requests[i].avatar.tilemap[y][x] === 1) { %>
+                            <rect x = '<%=x*12%>' y = '<%=y*12%>' width='12' height='12' style='fill:<%=friend_requests[i].avatar.color%>'></rect>
+                          <% } else { %>
+                            <rect x = '<%=x*12%>' y = '<%=y*12%>' width='12' height='12' style='fill:none%>'></rect>
+                          <% } %>
+                        <% } %>
+                      <% } %>
+                    </svg>
+                  </div>
+                  <div class = 'col-lg-4 col-md-4'>
+                    <p class = 'bump_down_x'><%=friend_requests[i].username%></p>
+                  </div>
+                  <div class = 'col-lg-4 col-md-4'>
+                    <p class = 'primary bump_down_x'>Movies Seen : <%=friend_requests[i].movies.length%></p>
+                  </div>
+                  <div class="col-lg-12 col-md-12">
+                    <button class = 'btn primary_btn' onclick = 'acceptFriendRequest("<%=friend_requests[i]._id%>")'>Add Friend</button>
+                    <p id = 'accept_warning_<%=friend_requests[i]._id%>' class = 'warning'></p>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+            <div class = 'col-lg-3 col-md-3'></div>
+          <% } %>
           <div class = 'col-lg-12 col-md-12 bottom_divider'>
             <div class="row">
               <div class="col-lg-2 col-md-4">
                 <div class = 'avatarWrapper float_left'>
-                  <svg width='100' height='100' id = 'avatar'>
+                  <svg width='100' height='100' class = 'avatar'>
                     <% for(let y = 0; y < 5; y++) {
                       for(let x = 0; x < 5; x++) {
                         if(avatar.tilemap[y][x] === 1) { %>
@@ -101,7 +141,7 @@
             </div>
           </div>
         </div>
-        <div class = 'row'>
+        <div class = 'row bottom_divider'>
           <div class="col-lg-12 col-md-12r">
             <br>
             <h3 class = 'primary'> 19 Club </h3>
@@ -118,6 +158,38 @@
               <% }) %>
             </div>
           </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <h3 class = 'primary float_center'>Friends</h3>
+            <br>
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#friendModal">Add a Friend</button>
+            <br><br>
+            <% for(let i = 0; i < friends.length; i++) { %>
+              <div class = 'row clicker_cursor' onclick = 'window.location.pathname="/friends/<%=friends[i]._id%>"'>
+                <div class="col-lg-3 col-md-3"></div>
+                <div class = 'col-lg-3 col-md-3'>
+                  <svg width="60" height="60" class = 'avatarSmall float_right'>
+                    <% for(let y = 0; y < 5; y++) {
+                      for(let x = 0; x < 5; x++) {
+                        if(friends[i].avatar.tilemap[y][x] === 1) { %>
+                          <rect x = '<%=x*12%>' y = '<%=y*12%>' width='12' height='12' style='fill:<%=friends[i].avatar.color%>'></rect>
+                        <% } else { %>
+                          <rect x = '<%=x*12%>' y = '<%=y*12%>' width='12' height='12' style='fill:none%>'></rect>
+                        <% } %>
+                      <% } %>
+                    <% } %>
+                  </svg>
+                </div>
+                <div class = 'col-lg-3 col-md-3'>
+                  <p class = 'bump_down_x float_left'><%=friends[i].username%></p>
+                </div>
+                <div class="col-lg-3 col-md-3"></div>
+              </div>
+            <% } %>
+          </div>
+        </div>
       </div>
 
       <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog">
@@ -132,6 +204,59 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               <button type="button" class="primary_btn btn" onclick = 'logout()'>Logout</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="friendModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title primary">Add a Friend</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <br>
+              <span class = 'warning clear' id = 'addFriendError'></span>
+              <div class="row">
+                <div class="col-lg-3">
+                  <span class = 'primary'> Username: </span>
+                </div>
+                <div class="col-lg-9">
+                  <input type="text" class = 'login_input' name = 'friendSearch' id = 'friendSearch'/>
+                </div>
+                <div class="col-lg-12 col-md-12 overflowed" id = 'usersWrapper'></div>
+                <div class="col-lg-12 col-md-12 no_display" id = 'profileWrapper'>
+                  <br>
+                  <div class="col-lg-12 col-md-12">
+                    <div class="avatarWrapper float_center">
+                      <svg id = 'profilePreviewAvatar' class = 'avatar' width = '80' height = '80'></svg>
+                      <br><br>
+                      <h2 id = 'profilePreviewUsername'></h2>
+                      <br><br>
+                    </div>
+                    <br><br><br>
+                    <div class="stat_box checkered float_center bump_down">
+                      <p><span class = 'primary'>Movies Seen: </span><span id = 'profilePreviewMoviesSeen'>5</span></p>
+                      <p><span class = 'primary'>Friends: </span><span id = 'profilePreviewFriends'>12</span></p>
+                      <p><span class = 'primary'>Reviews: </span><span id = 'profilePreviewReviews'>0</span></p>
+                      <p class = 'primary'>User Since <span id = 'profilePreviewDateRegistered'>February, 2020</span></p>
+                    </div>
+                    <br>
+                    <button class = 'btn primary_btn' onclick = 'addFriend()' id = 'friendAddButton'>Add Friend</button>
+                    <p class = 'warning' id = 'friendRequestError'></p>
+                  </div>
+                  <br><br>
+                </div>
+              </div>
+              <br>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button type="button" class="primary_btn btn" onclick = 'addFriend()'>Search</button>
             </div>
           </div>
         </div>

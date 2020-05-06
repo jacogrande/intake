@@ -101,6 +101,10 @@ const clearCache = (userId) => {
   cache.del(userId.toString());
 };
 
+const flushCache = () => {
+  cache.flushAll();
+};
+
 module.exports = {
   cacheMovieList,
   checkCache,
@@ -111,4 +115,5 @@ module.exports = {
   deleteReview,
   clearCache,
   updateReview,
+  flushCache,
 };

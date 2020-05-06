@@ -10,35 +10,43 @@ const userController = require('../db/userController');
 const cache = require('../db/cache.js');
 
 const secret = '123123';
-const token = jwt.sign({ body: 'goteem', exp: Math.floor(Date.now() / 1000) + (60 * 60) }, secret);
-
+const token = jwt.sign(
+  { body: 'goteem', exp: Math.floor(Date.now() / 1000) + 60 * 60 },
+  secret,
+);
 
 const userRouter = express.Router();
 
-userRouter.route('/register') // registration route
-  .get((req, res) => { // if the user is registered, send them to the profile page, otherwise, set them up with a registration page
+userRouter
+  .route('/register') // registration route
+  .get((req, res) => {
+    // if the user is registered, send them to the profile page, otherwise, set them up with a registration page
     if (req.user != null) {
       res.redirect('/movies');
     } else {
       res.render('login');
     }
   })
-  .post(async (req, res) => { // post request to add a new user
-    const { username } = req.body;
-    const { password } = req.body;
-    const { email } = req.body;
-    const newUser = new User({ // create a new user with the sent data
+  .post(async (req, res) => {
+    // post request to add a new user
+    const { username, password, email } = req.body;
+    const newUser = new User({
+      // create a new user with the sent data
       username,
       password,
       email,
     });
     try {
-      const emailInUse = await User.findOne({ email: newUser.email }).select('').lean();
+      const emailInUse = await User.findOne({ email: newUser.email })
+        .select('')
+        .lean();
       if (emailInUse) {
         debug('email already in use');
         return res.status(500).json({ error: 'Email already in use.' });
       }
-      const usernameInUse = await User.findOne({ username: newUser.username }).select('').lean();
+      const usernameInUse = await User.findOne({ username: newUser.username })
+        .select('')
+        .lean();
       if (usernameInUse) {
         debug('username already in use');
         return res.status(500).json({ error: 'Username already in use.' });
@@ -57,7 +65,8 @@ userRouter.route('/register') // registration route
     }
   });
 
-userRouter.route('/login')
+userRouter
+  .route('/login')
   .get((req, res) => {
     if (req.user != null) {
       res.redirect('/');
@@ -65,15 +74,22 @@ userRouter.route('/login')
       res.render('login');
     }
   })
-  .post(passport.authenticate('local', { failureRedirect: '/login' }), (req, res) => {
-    cache.clearCache(req.user._id);
-    res.send({ success: true });
-  });
+  .post(
+    passport.authenticate('local', { failureRedirect: '/login' }),
+    (req, res) => {
+      cache.clearCache(req.user._id);
+      res.send({ success: true });
+    },
+  );
 
-userRouter.route('/profile') // profile page
+userRouter
+  .route('/profile') // profile page
   .get(passport.isAuthenticated, async (req, res) => {
     // get user movies
-    let movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
+    let movieList = await movieController.findMoviesByUser(
+      req.user.movies,
+      req.user._id,
+    );
     movieList = movieList.map((movie) => ({
       title: movie.title,
       total_rating: movie.total_rating,
@@ -84,14 +100,26 @@ userRouter.route('/profile') // profile page
     if (!req.user.avatar.color) {
       try {
         debug('creating avatar');
-        req.user.avatar = await userController.createAvatar(req.user._id, req.user.username);
+        req.user.avatar = await userController.createAvatar(
+          req.user._id,
+          req.user.username,
+        );
       } catch (err) {
         debug(err);
         res.status(500).json('error generating identicon');
       }
     }
 
-    res.render('profile', { username: req.user.username, movies: movieList, avatar: req.user.avatar });
+    const friendRequestList = await userController.populateFriendRequests(req.user.friend_requests);
+    const friends = await userController.populateFriends(req.user.friends);
+
+    res.render('profile', {
+      username: req.user.username,
+      movies: movieList,
+      avatar: req.user.avatar,
+      friend_requests: friendRequestList,
+      friends,
+    });
   });
 
 // userRouter.route('/test')
@@ -135,7 +163,8 @@ const getSecretKey = () => {
   }
 };
 
-userRouter.route('/passwordReset')
+userRouter
+  .route('/passwordReset')
   .get((req, res) => {
     res.render('passwordReset', { step: 1 });
   })
@@ -156,7 +185,7 @@ userRouter.route('/passwordReset')
       const payload = {
         id: userId._id,
         email,
-        exp: Math.floor(Date.now() / 1000) + (60 * 60),
+        exp: Math.floor(Date.now() / 1000) + 60 * 60,
       };
 
       const secret = getSecretKey();
@@ -233,8 +262,8 @@ userRouter.route('/passwordReset')
     }
   });
 
-
-userRouter.route('/passwordReset/:id/:token')
+userRouter
+  .route('/passwordReset/:id/:token')
   .get((req, res) => {
     try {
       const secret = getSecretKey();
@@ -247,25 +276,25 @@ userRouter.route('/passwordReset/:id/:token')
   .post(async (req, res) => {
     const secret = getSecretKey();
     const payload = jwt.verify(req.params.token, secret);
-    const dbResponse = await userController.resetPassword(payload.id, req.body.password);
+    const dbResponse = await userController.resetPassword(
+      payload.id,
+      req.body.password,
+    );
     res.send(dbResponse);
   });
 
-
-userRouter.route('/delete')
-  .delete(passport.isAuthenticated, (req, res) => {
-    User.deleteOne({ _id: req.user._id }, (err) => {
-      if (err) {
-        return res.status(500).json({ error: err });
-      }
-      res.send('user deleted');
-    });
+userRouter.route('/delete').delete(passport.isAuthenticated, (req, res) => {
+  User.deleteOne({ _id: req.user._id }, (err) => {
+    if (err) {
+      return res.status(500).json({ error: err });
+    }
+    res.send('user deleted');
   });
+});
 
-userRouter.route('/logout')
-  .get(passport.isAuthenticated, (req, res) => {
-    req.logout();
-    res.redirect('/login');
-  });
+userRouter.route('/logout').get(passport.isAuthenticated, (req, res) => {
+  req.logout();
+  res.redirect('/login');
+});
 
 module.exports = userRouter;

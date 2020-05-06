@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>INTAKE</title>
 
+
     <!-- CSS links -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/style.css">
@@ -13,7 +14,7 @@
 
     <div id = 'page'>
       <!-- ====== NAV ====== -->
-      <nav class="navbar navbar-expand-lg navbar_home">
+      <nav class="navbar navbar-expand-lg">
         <a class="navbar-brand" id = 'logo' href="/">INTAKE</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -21,7 +22,7 @@
         <span class = 'col-lg-7 col-md-7'></span>
         <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="/">ABOUT</a>
             </li>
             <li class="nav-item">
@@ -30,13 +31,12 @@
             <li class="nav-item">
               <a class="nav-link" href="/stats">STATS</a>
             </li>
-            <% if(loggedIn) { %>
-            <li class="nav-item">
-                <% if(friend_requests.length > 0) { %>
-                  <a class="nav-link" href="/profile">PROFILE <div class = 'friendRequestNotification float_right'><p><%=friend_requests.length %></p></div></a>
-                <% } else { %>
-                  <a class="nav-link" href="/profile">PROFILE</a>
-                <% } %>
+            <li class="nav-item active">
+              <% if(friend_requests.length > 0) { %>
+                <a class="nav-link" href="/profile">PROFILE <div class = 'friendRequestNotification float_right'><p><%=friend_requests.length %></p></div></a>
+              <% } else { %>
+                <a class="nav-link" href="/profile">PROFILE</a>
+              <% } %>
             </li>
             <li class="nav_button">
               <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>
@@ -46,18 +46,13 @@
                 </div>
               </a>
             </li>
-            <% } else { %>
-              <li class="nav-item">
-                  <a class="nav-link" href="/login">LOGIN</a>
-              </li>
-            <% } %>
           </ul>
         </div>
       </nav>
 
       <%
-        function getFormattedDate(date) {
-          const todayTime = new Date(parseInt(date));
+        function getFormattedDate() {
+          const todayTime = new Date();
           const month = todayTime.getMonth() + 1;
           const day = todayTime.getDate();
           const year = todayTime.getFullYear();
@@ -65,37 +60,51 @@
         }
       %>
 
+      <%
+        movies.sort((a,b) => b.total_rating - a.total_rating)
+      %>
+
       <!-- ====== MAIN ====== -->
-      <div id = 'jumbo'>
-        <h1 class = 'super_logo fade_in_slow'>INTAKE</h1>
+      <div class="container fade_in" id = 'main'>
+        <div class="row">
+          <div class = 'col-lg-12 col-md-12 bottom_divider'>
+            <div class="row">
+              <div class="col-lg-2 col-md-4">
+                <div class = 'avatarWrapper float_left'>
+                  <svg width='100' height='100' class = 'avatar'>
+                    <% for(let y = 0; y < 5; y++) {
+                      for(let x = 0; x < 5; x++) {
+                        if(avatar.tilemap[y][x] === 1) { %>
+                          <rect x = '<%=x*25%>' y = '<%=y*25%>' width='25' height='25' style='fill:<%=avatar.color%>'></rect>
+                        <% } else { %>
+                          <rect x = '<%=x*25%>' y = '<%=y*25%>' width='25' height='25' style='fill:none%>'></rect>
+                        <% } %>
+                      <% } %>
+                    <% } %>
+                  </svg>
+                </div>
+              </div>
+              <div class="col-lg-8 col-md-8 float_center">
+                <h1 class = 'float_left'><%= username %></h1>
+              </div>
+              <div class="col-lg-2 col-sm-2"></div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <h2>Movies Seen</h2>
+        <br>
+        <div class="row">
+          <% movies.forEach( (movie) => {%>
+            <div class="col-lg-3 col-md-3">
+              <a class = 'clicker_cursor' onclick='window.location.pathname+="/<%=movie._id%>"'><img src=<%= movie.poster %> width="150" alt=<%= movie.title %> class = 'poster'/></a>
+              <p class = 'rating_overview'><%= movie.total_rating %> / 20</p>
+            </div>
+          <%}) %>
+        </div>
       </div>
 
-      <div class="container" id = 'main'>
-        <div class="row bottom_divider">
-          <div class="col-lg-6 col-md-6 right_border">
-            <h2>Purpose</h2>
-            <p class = 'align_left indent'>Intake is a tool created to track media consumption. Add movies to your feed, rate them, review them, and then learn more about your tastes through the use of our built-in viewing statistics. </p>
-          </div>
-          <div class="col-lg-6 col-md-6">
-            <h2>Criteria</h2>
-            <p class = 'align_left'>Intake has unique criteria that make up its rating system. Each rating is out of 5.</p>
-            <p class = 'align_left'><span class = 'primary'>Entertainment : </span>How fun was the movie?</p>
-            <p class = 'align_left'><span class = 'primary'>Plot : </span>How strong was the plot? How about the characters?</p>
-            <p class = 'align_left'><span class = 'primary'>Style : </span>Did the movie have a consistent and powerful style? How interesting was the cinematography?</p>
-            <p class = 'align_left'><span class = 'primary'>Bias : </span>Sometimes the best movies aren't our favorite movies, and vice versa. Look back at the other ratings. Does the movie deserve such high praise, or was it was underrated? This if your chance to self correct and give a total rating that more accurately reflects your opinion of the movie. </p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-2 col-md-2"></div>
-          <div class="col-lg-8 col-md-8">
-            <br><br>
-            <h2>Upcoming Updates</h2>
-            <p><span class = 'primary'>Stats for all movies : </span>A statistics page that will contain data on all movies in your Intake</p>
-            <p><span class = 'primary'>Friends : </span> A new friends page will be added that will allow you to add friends and view their public statistics and ratings</p>
-          </div>
-          <div class="col-lg-2 col-md-2"></div>
-        </div>
-      </div>
+
 
       <!-- ===== Movie Modal ===== -->
       <div class="modal fade" id="movieModal" tabindex="-1" role="dialog">
@@ -191,15 +200,16 @@
       <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
     </div>
 
-
-    <!-- Footer -->
-    <div class="footer footer_home">
-      <p> © JACKSON PROWELL</p>
-    </div>
-    <!-- Footer -->
-
+    <script src = '/js/loading.js'></script>
     <script type="text/javascript" src = '/js/main.js'></script>
     <script type="text/javascript" src = '/js/jquery.min.js'></script>
     <script type="text/javascript" src = '/js/bootstrap.min.js'></script>
+
+
+    <!-- Footer -->
+    <div class="footer fixed-bottom">
+      <p> © JACKSON PROWELL</p>
+    </div>
+
   </body>
 </html>

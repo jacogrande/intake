@@ -29,7 +29,7 @@ movieRouter.route('/')
       debug(`movies cached to user with id: ${req.user._id}`);
     }
 
-    return res.render('movies', { movieList, page_title: 'All Movies' });
+    return res.render('movies', { movieList, page_title: 'Movies Seen', friend_requests: req.user.friend_requests });
   })
   .post(passport.isAuthenticated, async (req, res) => {
     const { imdbid } = req.body;
@@ -129,6 +129,17 @@ movieRouter.route('/')
     return res.status(200).json({ response: 'new movie added' });
   });
 
+movieRouter.route('/refreshPosters')
+  .get(passport.isAuthenticated, async (req, res) => {
+    const isAdmin = db.checkCredentials(req.query.admin_key);
+    if (isAdmin) {
+      await movieController.refreshPosters();
+      cache.flushCache();
+    }
+    res.send('Refreshing...');
+  });
+
+
 // route for accessing individual movies
 movieRouter.route('/:id')
   .get(passport.isAuthenticated, async (req, res) => { // returns all data on identified movie
@@ -154,8 +165,11 @@ movieRouter.route('/:id')
           debug('cache hit');
           const movie = db.find(existsInCache, id);
           const reviewed = movie.reviews.findIndex((e) => e.user_id.toString() === req.user._id.toString());
+          if (reviewed != -1 && req.user.reviews.indexOf(movie.reviews[reviewed]._id) === -1) {
+            userController.createReview(movie.reviews[reviewed]._id, req.user._id);
+          }
           return res.render('movies', {
-            selection: movie, username: req.user.username, upvoted_reviews: upvoted_reviews.reviews, reviewed,
+            selection: movie, username: req.user.username, upvoted_reviews: upvoted_reviews.reviews, reviewed, friend_requests: req.user.friend_requests,
           });
         }
 
@@ -167,7 +181,7 @@ movieRouter.route('/:id')
           const movie = db.find(cachedMovies, id);
           const reviewed = movie.reviews.findIndex((e) => e.user_id.toString() === req.user._id.toString());
           return res.render('movies', {
-            selection: movie, username: req.user.username, upvoted_reviews: upvoted_reviews.reviews, reviewed,
+            selection: movie, username: req.user.username, upvoted_reviews: upvoted_reviews.reviews, reviewed, friend_requests: req.user.friend_requests,
           });
         } catch (err) {
           debug(err);
@@ -240,6 +254,7 @@ movieRouter.route('/:id/review')
       let reviewId = await movieController.addReview(review, req.user._id, req.user.username, id);
       reviewId = reviewId.reviews[reviewId.reviews.length - 1]._id;
       cache.addReview(req.user._id, req.user.username, review, id, reviewId);
+      await userController.createReview(reviewId, req.user._id);
     } catch (err) {
       debug(err);
       return res.status(401).json(err);
@@ -294,6 +309,7 @@ movieRouter.route('/:id/review/:review_id') // upvote
         userController.removeReview(user, id, review_id);
       });
       cache.deleteReview(id, review_id, req.user.username, req.user._id);
+      await userController.deleteReview(review_id, req.user._id);
       return res.status(200).json('success');
     } catch (err) {
       debug(err);

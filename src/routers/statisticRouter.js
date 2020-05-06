@@ -10,7 +10,7 @@ const statisticRouter = express.Router();
 
 statisticRouter.route('/')
   .get(passport.isAuthenticated, (req, res) => {
-    res.render('stats', { title: 'All Stats' });
+    res.render('stats', { title: 'All Stats', friend_requests: req.user.friend_requests });
   });
 
 statisticRouter.route('/:property')
@@ -40,7 +40,9 @@ statisticRouter.route('/:property')
         movieArray.push([key, data[key]]);
       }
     });
-    res.render('stats', { property, title: `${property}`, movieArray });
+    res.render('stats', {
+      property, title: `${property}`, movieArray, friend_requests: req.user.friend_requests,
+    });
   });
 
 statisticRouter.route('/:property/:value')
@@ -58,7 +60,7 @@ statisticRouter.route('/:property/:value')
     }
     const results = db.findByValue(movieList, property, value, true); // call movie method that returns an array of all movies with the specified property value
     if (results.length > 0) {
-      res.render('individualStats.ejs', { movies: results, title: `${property} : ${value}` });
+      res.render('individualStats.ejs', { movies: results, title: `${property} : ${value}`, friend_requests: req.user.friend_requests });
     } else {
       res.redirect('/');
     }

@@ -3,12 +3,11 @@ const debug = require('debug')('index');
 const morgan = require('morgan');
 const path = require('path');
 const mongoose = require('mongoose');
-const passport = require('passport');
 const helmet = require('helmet');
-const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const compression = require('compression');
+const passport = require('./auth.js');
 
 const User = require('./src/schemas/user.js');
 
@@ -33,6 +32,7 @@ const PORT = process.env.PORT || 3000;
 const movieRouter = require('./src/routers/movieRouter.js');
 const statisticRouter = require('./src/routers/statisticRouter.js');
 const userRouter = require('./src/routers/userRouter.js');
+const friendRouter = require('./src/routers/friendRouter.js');
 
 
 app.use(session({
@@ -68,10 +68,11 @@ app.use(passport.session());
 app.use('/movies', movieRouter);
 app.use('/stats', statisticRouter);
 app.use('/', userRouter);
+app.use('/friends', friendRouter);
 
 app.get('/', (req, res) => {
   if (req.user) {
-    res.render('about', { loggedIn: true });
+    res.render('about', { loggedIn: true, friend_requests: req.user.friend_requests });
   } else {
     res.render('about', { loggedIn: false });
   }

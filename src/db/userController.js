@@ -1,6 +1,7 @@
 const User = require('../schemas/user.js');
 const debug = require('debug')('index');
 const identicon = require('./identicon.js');
+const mongoose = require('mongoose');
 
 const addMovie = (userId, movieId) => { // function for adding a new movie to the user's movie list
   User.findOne({ _id: userId }, (err, user) => {
@@ -81,6 +82,29 @@ const removeReview = async (_id, movieId, reviewId) => {
   return false;
 };
 
+const createReview = async (reviewId, _id) => {
+  debug(`review created by user with id: ${_id}`);
+  const user = await User.findOne({ _id }).select('reviews');
+  if (user.reviews.indexOf(reviewId) === -1) {
+    user.reviews.push(reviewId);
+    await user.save((err) => {
+      if (err) {
+        debug(err);
+        throw err;
+      }
+    });
+  }
+};
+
+const deleteReview = async (reviewId, _id) => {
+  const user = await User.findOne({ _id }).select('reviews');
+  if (user.reviews.indexOf(reviewId) != -1) {
+    debug(`deleting review by user with id: ${_id}`);
+    user.reviews.splice(user.reviews.indexOf(reviewId), 1);
+    user.save();
+  }
+};
+
 const flushReviews = (_id) => User.findOne({ _id }, (err, user) => {
   debug(user.upvoted_reviews);
   user.upvoted_reviews = [];
@@ -103,6 +127,55 @@ const createAvatar = async (_id, username) => {
   }
 };
 
+const findLikeNames = async (username, friends) => {
+  const users = await User.find({
+    username: new RegExp(username, 'i'),
+    _id: { $nin: friends.map((friendId) => mongoose.Types.ObjectId(friendId)) },
+  }).select('username avatar movies').lean();
+  return users;
+};
+
+const getPublicInfo = async (username) => {
+  const user = await User.findOne({ username }).select('avatar movies friends reviews date_registered').lean();
+  if (!user.reviews) user.reviews = [];
+  return user;
+};
+
+const getPublicInfoById = async (_id) => {
+  const user = await User.findOne({ _id }).select('avatar movies username').lean();
+  if (!user.reviews) user.reviews = [];
+  return user;
+};
+
+
+const makeFriendRequest = async (_id, userId) => {
+  const target = await User.findOne({ _id }).select('friend_requests');
+  if (target.friend_requests.indexOf(userId) === -1) {
+    target.friend_requests.push(userId);
+    await target.save();
+    console.log('friend request made');
+    return true;
+  }
+  throw new Error('Friend request already sent.');
+};
+
+const populateFriendRequests = async (friendRequests) => await User.find({ _id: { $in: friendRequests.map((request) => mongoose.Types.ObjectId(request)) } }).select('avatar movies username').lean();
+const populateFriends = async (friends) => await User.find({ _id: { $in: friends.map((request) => mongoose.Types.ObjectId(request)) } }).select('avatar username').lean();
+
+const acceptFriendRequest = async (_id, userId) => {
+  const user = await User.findOne({ _id }).select('friends');
+  if (!user.friends) {
+    user.friends = [];
+    console.log(user);
+  }
+  if (user.friends.indexOf(userId) === -1) {
+    user.friends.push(userId);
+    await user.save();
+  } else {
+    throw new Error('Friend already added.');
+  }
+};
+
 module.exports = {
   addMovie,
   removeMovie,
@@ -112,4 +185,13 @@ module.exports = {
   removeReview,
   flushReviews,
   createAvatar,
+  findLikeNames,
+  getPublicInfo,
+  createReview,
+  deleteReview,
+  makeFriendRequest,
+  populateFriendRequests,
+  populateFriends,
+  acceptFriendRequest,
+  getPublicInfoById,
 };

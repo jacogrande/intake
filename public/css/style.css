@@ -14,6 +14,10 @@ body{
   color:#D5D5D5;
 }
 
+.dark {
+  background: #192024;
+}
+
 .warning {
   color: rgb(238, 77, 88);
 }
@@ -24,6 +28,15 @@ body{
 
 .clear {
   opacity: 0;
+  transition: all 0.2s;
+}
+
+.overflowed {
+  overflow: scroll;
+}
+
+.vertical_padding {
+  padding: 15px 0px;
 }
 
 .border_bottom{
@@ -161,6 +174,10 @@ a:hover {
   margin-top: 7px;
 }
 
+.bump_down_x {
+  margin-top: 25px;
+}
+
 .bump_right_sm {
   margin-right: -5px;
 }
@@ -268,13 +285,17 @@ a:hover {
   margin-left: -85px;
 }
 
-#searchBar {
-  border: none;
+.friendRequestNotification {
+  background: rgb(238, 77, 88);
+  border-radius: 100%;
+  width:15px;
+  height:15px;
+  margin-left: 5px;
 }
 
-#searchBar:focus, #searchBar:active{
-  border: none;
-  outline:none;
+.friendRequestNotification p {
+  text-align: center;
+  font-size: 10px;
 }
 
 /* ===== MAIN ===== */
@@ -397,7 +418,7 @@ textarea {
   padding: 5px 0px;
 }
 
-.stat_box p:nth-child(odd){
+.checkered p:nth-child(odd){
   background:  #192024;
 }
 
@@ -557,13 +578,37 @@ textarea {
   border-radius: 100%;
 }
 
-#avatar {
+.avatar {
   width: 125px;
   height:125px;
-  margin-top:15px;
+  margin-top:12.5px;
   /* padding:10px 10px; */
   /* border: 1px solid #aaa; */
   border-radius: 50%;
+}
+
+.avatarWrapperSmall {
+  width: 75px;
+  height:75px;
+  background: #111;
+  border-radius: 100%;
+}
+
+.avatarSmall {
+  width: 60px;
+  height:60px;
+  margin-top: 7.5px;
+  border-radius: 100%;
+}
+
+#usersWrapper {
+  height: 400px;
+}
+
+.outline:hover{
+  opacity: 0.9;
+  transition: all 0.2s;
+  outline: 1px solid #8EC3AF;
 }
 
 /* ===== ABOUT ====== */
@@ -657,6 +702,15 @@ textarea {
 
 #reviewSection .indented {
   margin-left: 15px;
+}
+
+.friendRequestWrapper {
+  width: 100%;
+  padding: 15px 0px 20px 0px;
+  border: 1px solid black;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px #192024;
+  background: #192024;
 }
 
 

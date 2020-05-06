@@ -44,7 +44,7 @@
     "ignore": [
       "node_modules/**/node_modules"
     ],
-    "delay": 2500
+    "delay": 500
   },
   "engines": {
     "node": "10.x"

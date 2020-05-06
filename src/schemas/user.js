@@ -19,6 +19,7 @@ const UserSchema = new mongoose.Schema({
   movies: [String],
   date_registered: { type: Date, default: Date.now },
   friends: [String],
+  friend_requests: [String],
   upvoted_reviews: [{
     movie_id: String,
     reviews: [String],
@@ -27,6 +28,7 @@ const UserSchema = new mongoose.Schema({
     color: String,
     tilemap: [[Number]],
   },
+  reviews: [String],
 });
 
 UserSchema.plugin(uniqueValidator);

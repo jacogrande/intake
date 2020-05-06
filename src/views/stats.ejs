@@ -32,7 +32,11 @@
                   <a class="nav-link" href="/stats">STATS</a>
               </li>
               <li class="nav-item">
+                <% if(friend_requests.length > 0) { %>
+                  <a class="nav-link" href="/profile">PROFILE <div class = 'friendRequestNotification float_right'><p><%=friend_requests.length %></p></div></a>
+                <% } else { %>
                   <a class="nav-link" href="/profile">PROFILE</a>
+                <% } %>
               </li>
               <li class="nav_button">
                 <a href = '#movieModal' data-toggle="modal" data-target="#movieModal" onclick = 'refreshMovieModal()'>
@@ -112,7 +116,7 @@
           <div class="row">
             <div class="col-lg-4 col-md-4 align_center">
               <h3 class = 'bold'>Highest Rated</h3>
-              <div class="stat_box">
+              <div class="stat_box checkered">
                 <% highestTotalRating.forEach((value) => { %>
                   <p><a href = "/stats/<%=title%>/<%=value[0]%>"><span class = 'primary '><%= value[0] %> : </span> <%= value.total_average %> </a><span class = 'primary float_right'><%= value[1].length %></span></p>
                 <% }) %>
@@ -120,7 +124,7 @@
             </div>
             <div class="col-lg-4 col-md-4 align_center">
               <h3 class = 'bold'>Most Viewed</h3>
-              <div class="stat_box">
+              <div class="stat_box checkered">
                 <% mostViewed.forEach((value) => { %>
                   <p><a href = "/stats/<%=title%>/<%=value[0]%>"><span class = 'primary '><%= value[0] %> : </span> <%= value[1].length %> </a></p>
                 <% }) %>
@@ -128,7 +132,7 @@
             </div>
             <div class="col-lg-4 col-md-4 align_center">
               <h3 class = 'bold'>Favorite</h3>
-              <div class="stat_box">
+              <div class="stat_box checkered">
                 <% highestBiasRating.forEach((value) => { %>
                   <p><a href = "/stats/<%=title%>/<%=value[0]%>"><span class = 'primary '><%= value[0] %> : </span> <%= value.bias_average %>  </a><span class = 'primary float_right'><%= value[1].length %></span></p>
                 <% }) %>
@@ -138,7 +142,7 @@
               <br><br>
 
               <h3 class = 'bold'>Most Stylish</h3>
-              <div class="stat_box">
+              <div class="stat_box checkered">
                 <% highestStyleRating.forEach((value) => { %>
                   <p><a href = "/stats/<%=title%>/<%=value[0]%>"><span class = 'primary '><%= value[0] %> : </span> <%= value.style_average %>  </a><span class = 'primary float_right'><%= value[1].length %></span></p>
                 <% }) %>
@@ -148,7 +152,7 @@
               <br><br>
 
               <h3 class = 'bold'>Most Entertaining</h3>
-              <div class="stat_box">
+              <div class="stat_box checkered">
                 <% highestEntertainmentRating.forEach((value) => { %>
                   <p><a href = "/stats/<%=title%>/<%=value[0]%>"><span class = 'primary '><%= value[0] %> : </span> <%= value.entertainment_average %> </a><span class = 'primary float_right'><%= value[1].length %></span> </p>
                 <% }) %>
@@ -158,7 +162,7 @@
               <br><br>
 
               <h3 class = 'bold'>Best Plots</h3>
-              <div class="stat_box">
+              <div class="stat_box checkered">
                 <% highestPlotRating.forEach((value) => { %>
                   <p><a href = "/stats/<%=title%>/<%=value[0]%>"><span class = 'primary '><%= value[0] %> : </span> <%= value.plot_average %>  </a><span class = 'primary float_right'><%= value[1].length %></span></p>
                 <% }) %>
