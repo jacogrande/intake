@@ -74,7 +74,6 @@ db.checkCredentials = (admin_key) => {
       return true;
     }
   } else if (process.env.NODE_ENV === 'production') {
-    debug(admin_key);
     if (admin_key === process.env.ADMIN_KEY) {
       return true;
     }
