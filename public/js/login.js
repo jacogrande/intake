@@ -116,3 +116,14 @@ const submitNewPassword = () => {
     },
   }).then((response) => window.location.pathname = '/login');
 };
+
+document.getElementById('password_input').addEventListener('keydown', (e) => {
+  if (e.keyCode === 13) {
+    login();
+  }
+});
+document.getElementById('username_input').addEventListener('keydown', (e) => {
+  if (e.keyCode === 13) {
+    login();
+  }
+});
