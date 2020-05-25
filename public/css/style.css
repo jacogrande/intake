@@ -235,6 +235,12 @@ a:hover {
   border-radius: 100%;
   transition: background 0.5s;
   padding:0px 8px;
+  width:43px;
+  height:42px;
+}
+
+.navbar-toggler-icon {
+  color:#d5d5d5
 }
 
 .nav_button:hover {
