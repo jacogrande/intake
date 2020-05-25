@@ -2,7 +2,13 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>INTAKE</title>
+    <% if(locals.movieList) { %>
+      <title>Movies you've seen</title>
+    <% } else if(locals.friend_username) { %>
+      <title><%=friend_username%>'s <%=selection.title%> rating </title>
+    <% } else { %>
+      <title><%=selection.title%></title>
+    <% } %>
 
     <!-- CSS links -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
