@@ -4,10 +4,13 @@
     <meta charset="utf-8">
     <% if(locals.movieList) { %>
       <title>Movies you've seen</title>
+      <meta name='description' content='View all the movies you have added to your Intake.'>
     <% } else if(locals.friend_username) { %>
       <title><%=friend_username%>'s <%=selection.title%> rating </title>
+      <meta name='description' content="View your friend's ratings for the movie: <%=selection.title%>.">
     <% } else { %>
       <title><%=selection.title%></title>
+      <meta name='description' content='View your ratings for the movie: <%=selection.title%>.'>
     <% } %>
 
     <!-- CSS links -->
@@ -87,7 +90,7 @@
             <br>
             <div class="row">
               <% movieList.forEach( (movie) => {%>
-                <div class="col-lg-3 col-md-3">
+                <div class="col-lg-2 col-md-2">
                   <a href = <%= '/movies/' + movie._id %>><img class = "lazy poster" src='/src/images/lazy_placeholder.jpg' data-src='<%=movie.poster%>' data-srcset="<%=movie.poster%> 1x" width="150" alt='<%= movie.title %>'/></a>
                   <p><%= movie.total_rating %> / 20</p>
                 </div>
