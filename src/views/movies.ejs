@@ -86,7 +86,7 @@
             <div class="row">
               <% movieList.forEach( (movie) => {%>
                 <div class="col-lg-3 col-md-3">
-                  <a href = <%= '/movies/' + movie._id %>><img src=<%= movie.poster %> width="150" alt=<%= movie.title %> class = 'poster'/></a>
+                  <a href = <%= '/movies/' + movie._id %>><img class = "lazy poster" src='/src/images/lazy_placeholder.jpg' data-src='<%=movie.poster%>' data-srcset="<%=movie.poster%> 1x" width="150" alt='<%= movie.title %>'/></a>
                   <p><%= movie.total_rating %> / 20</p>
                 </div>
               <%}) %>
@@ -533,6 +533,8 @@
 
     <% if(locals.selection) { %>
       <script type="text/javascript" src = '/js/reviews.js'></script>
+    <% } else { %>
+      <script type='text/javascript' src = '/js/lazy.js'></script>
     <% } %>
     <script src = '/js/loading.js'></script>
     <script type="text/javascript" src = '/js/main.js'></script>
