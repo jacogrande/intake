@@ -59,12 +59,12 @@ const drawViewingTimeline = (rawData, id) => {
       if (rawData[i].entries > 0) {
         rows.push([dateString, rawData[i].entries, 'color:#ec8ac9', tooltipString]);
       } else {
-        rows.push([dateString, rawData[i].entries, 'color:#8EC3AF', tooltipString]);
+        rows.push([dateString, rawData[i].entries, 'color:#ec8ac9', tooltipString]);
       }
     } else if (rawData[i].entries > 0) {
       rows.push(['', rawData[i].entries, 'color:#ec8ac9', tooltipString]);
     } else {
-      rows.push(['', rawData[i].entries, 'color: #8EC3AF', tooltipString]);
+      rows.push(['', rawData[i].entries, 'color: #ec8ac9', tooltipString]);
     }
   }
 
@@ -108,7 +108,7 @@ const drawReleaseTimeline = (decades, id) => {
     if (decade.entries > 0) {
       rows.push([`${decade.decade.toString()}s`, decade.entries, 'color:#8EC3AF', `<span class = 'black'> <strong>${decade.decade} </strong><br> Movies Released: ${decade.entries}</span>`]);
     } else {
-      rows.push([`${decade.decade.toString()}s`, decade.entries, 'color:#ec8ac9', `<span class = 'black'> <strong>${decade.decade} </strong><br> Movies Released: ${decade.entries}</span>`]);
+      rows.push([`${decade.decade.toString()}s`, decade.entries, 'color:#8EC3AF', `<span class = 'black'> <strong>${decade.decade} </strong><br> Movies Released: ${decade.entries}</span>`]);
     }
   });
 

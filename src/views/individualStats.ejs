@@ -153,13 +153,7 @@
         </div>
 
         <div class="row">
-          <div class="col-lg-6 col-md-6">
-            <h3 class = 'bold'>Top Writers</h3>
-            <div class="stat_box float_center">
-              <% Object.keys(allWriters).forEach((key) => { %>
-                <p><span class = 'primary '><%= key %> : </span> <%= allWriters[key] %> </p>
-              <% }) %>
-            </div>
+          <div class="col-lg-3 col-md-3">
           </div>
           <div class="col-lg-6 col-md-6">
             <h3 class = 'bold'>Info</h3>
@@ -199,17 +193,36 @@
         <div class="top_seperator">
         </div>
         <br><br>
-        <h2>Movies</h2>
-        <br>
-        <div class="row align_center">
+        <% if(title != "Movie Statistics") { %>
+          <h2>Movies</h2>
           <br>
-          <% movies.forEach( (movie) => {%>
-            <div class="col-lg-3 col-md-3">
-              <a href = <%= '/movies/' + movie._id %>><img src=<%= movie.poster %> width="150" alt=<%= movie.title %> class = 'poster'/></a>
-              <p class = 'rating_overview'><%= movie.total_rating %> / 20</p>
-            </div>
-          <%}) %>
-        </div>
+          <div class="row align_center">
+            <br>
+            <% movies.forEach( (movie) => {%>
+              <div class="col-lg-3 col-md-3">
+                <a href = <%= '/movies/' + movie._id %>><img src=<%= movie.poster %> width="150" alt=<%= movie.title %> class = 'poster'/></a>
+                <p class = 'rating_overview'><%= movie.total_rating %> / 20</p>
+              </div>
+            <%}) %>
+          </div>
+        <% } else { %>
+          <h2>Other Stats</h2>
+          <div class="row">
+            <% let stat_fields = [
+                {display: 'Directors', src: 'director'},
+                {display: 'Writers', src: 'writer'},
+                {display: 'Content Ratings', src: 'rated'},
+                {display: 'Genres', src: 'genres'},
+                {display: 'Runtimes', src: 'runtime'},
+                {display: 'Themes', src: 'themes'},
+              ] %>
+            <% stat_fields.forEach((stat) => {%>
+              <div class="col-lg-4 col-md-4">
+                <a href= <%= '/stats/' + stat.src %> ><p class = 'stat_link'><%= stat.display %></p></a>
+              </div>
+            <%}) %>
+          </div>
+        <% } %>
       </div>
 
       <!-- ===== Movie Modal ===== -->

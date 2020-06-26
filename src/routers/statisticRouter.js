@@ -9,9 +9,19 @@ const cache = require('../db/cache.js');
 const statisticRouter = express.Router();
 
 statisticRouter.route('/')
-  .get(passport.isAuthenticated, (req, res) => {
-    res.render('stats', { title: 'All Stats', friend_requests: req.user.friend_requests });
-  });
+  .get(passport.isAuthenticated, async (req, res) => {
+    const existsInCache = cache.checkCache(req.user._id);
+    let movieList = null;
+    if (existsInCache) { // the movie list exists in the cache
+      debug('cache hit');
+      movieList = existsInCache;
+    } else {
+      movieList = await movieController.findMoviesByUser(req.user.movies, req.user._id);
+      cache.cacheMovieList(req.user._id.toString(), movieList);
+      debug(`movies cached to user with id: ${req.user._id}`);
+    }
+    res.render('individualStats.ejs', { movies: movieList, title: `Movie Statistics`, friend_requests: req.user.friend_requests });
+  })
 
 statisticRouter.route('/:property')
   .get(passport.isAuthenticated, async (req, res) => {
