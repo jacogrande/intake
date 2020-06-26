@@ -118,6 +118,7 @@ h2 {
 
 .addMovieButtonBig:hover, .addMovieButtonBig:active {
   background: #8EC3AF;
+  color:white;
   cursor: pointer;
 }
 
@@ -324,10 +325,6 @@ a:hover {
 #main .poster:hover {
   opacity: 0.8;
   transition: all 0.15s;
-}
-
-#main .row div {
-  /* background: #192024; */
 }
 
 .flame {
@@ -781,7 +778,5 @@ textarea {
   }
   100% {
     opacity:1;
+  }
 }
-
-
-/*  */
