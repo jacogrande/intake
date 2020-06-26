@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8">
     <% if(locals.movieList) { %>
-      <title>Movies you've seen</title>
+      <title>Movies you've seen | Intake</title>
       <meta name='description' content='View all the movies you have added to your Intake.'>
     <% } else if(locals.friend_username) { %>
-      <title><%=friend_username%>'s <%=selection.title%> rating </title>
+      <title><%=friend_username%>'s <%=selection.title%> rating | Intake</title>
       <meta name='description' content="View your friend's ratings for the movie: <%=selection.title%>.">
     <% } else { %>
-      <title><%=selection.title%></title>
+      <title><%=selection.title%> | Intake</title>
       <meta name='description' content='View your ratings for the movie: <%=selection.title%>.'>
     <% } %>
 
